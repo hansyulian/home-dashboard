@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:home_dashboard/models/dashboard_widget_settings.dart';
+import 'package:home_dashboard/modules/dashboard_config_manager.dart';
 import 'package:home_dashboard/screens/dashboardScreen/dashboard_screen_layout.dart';
 import 'package:home_dashboard/utils/debug_json.dart';
 
@@ -14,13 +15,12 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class DashboardScreenState extends State<DashboardScreen> {
-  Map<String, dynamic>? jsonData;
   DashboardWidgetSettings? dashboardWidgetSettings;
 
   @override
   void initState() {
     super.initState();
-    readJson();
+    initialize();
   }
 
   @override
@@ -28,12 +28,11 @@ class DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
   }
 
-  Future<void> readJson() async {
-    final String response = await rootBundle.loadString('assets/settings.json');
-    final Map<String, dynamic> jsonData = json.decode(response);
+  Future<void> initialize() async {
+    var dashboardConfig = await DashboardConfigManager.dashboardWidgetSettings;
+    debugJson(dashboardConfig.toJson());
     setState(() {
-      this.jsonData = jsonData;
-      dashboardWidgetSettings = DashboardWidgetSettings.fromJson(jsonData);
+      dashboardWidgetSettings = dashboardConfig;
     });
   }
 
@@ -48,8 +47,6 @@ class DashboardScreenState extends State<DashboardScreen> {
     if (dashboardWidgetSettings == null) {
       return loadingWidget();
     }
-
-    debugJson(jsonData);
     return DashboardScreenLayout(dashboardWidgetSettings!);
   }
 }

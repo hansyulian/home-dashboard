@@ -12,4 +12,11 @@ class DashboardWidgetSettingsColumn {
     var flex = safeParseInt(json['flex']);
     return DashboardWidgetSettingsColumn(content, flex);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'flex': flex,
+      'content': content.toJson(),
+    };
+  }
 }

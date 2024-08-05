@@ -14,4 +14,11 @@ class DashboardWidgetSettingsRow {
     var flex = safeParseInt(json['flex']);
     return DashboardWidgetSettingsRow(columns, flex);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'flex': flex,
+      'columns': columns.map((column) => column.toJson()).toList(),
+    };
+  }
 }
