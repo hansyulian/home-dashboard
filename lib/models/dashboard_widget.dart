@@ -16,6 +16,8 @@ abstract class DashboardWidgetBase {
         throw ArgumentError('Unknown widget type');
     }
   }
+
+  Map<String, dynamic> toJson();
 }
 
 // Concrete class for CctvWidget
@@ -29,6 +31,11 @@ class CctvWidget extends DashboardWidgetBase {
 
   factory CctvWidget.fromJson(Map<String, dynamic> json) {
     return CctvWidget(json['streamUrl']);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': type, 'streamUrl': streamUrl};
   }
 }
 
@@ -44,6 +51,14 @@ class CoinTrackerWidget extends DashboardWidgetBase {
   factory CoinTrackerWidget.fromJson(Map<String, dynamic> json) {
     return CoinTrackerWidget(json['coins']);
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'coins': coins,
+    };
+  }
 }
 
 // Concrete class for ClockWidget
@@ -55,6 +70,13 @@ class ClockWidget extends DashboardWidgetBase {
 
   factory ClockWidget.fromJson(Map<String, dynamic> json) {
     return ClockWidget();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+    };
   }
 }
 
@@ -69,5 +91,13 @@ class WeatherForecastWidget extends DashboardWidgetBase {
 
   factory WeatherForecastWidget.fromJson(Map<String, dynamic> json) {
     return WeatherForecastWidget(json['apiSource']);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'apiSource': apiSource,
+    };
   }
 }

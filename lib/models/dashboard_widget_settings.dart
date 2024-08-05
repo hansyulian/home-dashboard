@@ -13,4 +13,10 @@ class DashboardWidgetSettings {
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'rows': rows.map((row) => row.toJson()).toList(),
+    };
+  }
 }
