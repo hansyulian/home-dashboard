@@ -8,8 +8,9 @@ class DashboardScreenLayoutRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var flex = row.flex ?? 1;
     return Expanded(
-      flex: row.flex ?? 1,
+      flex: flex,
       child: Row(
           children: row.columns
               .map((column) => DashboardScreenLayoutColumn(column))

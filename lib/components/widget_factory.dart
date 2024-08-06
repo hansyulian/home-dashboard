@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:home_dashboard/components/cctv_player.dart';
-import 'package:home_dashboard/models/dashboard_widget.dart';
+import 'package:home_dashboard/components/cctv_widget.dart';
+import 'package:home_dashboard/components/clock_widget.dart';
+import 'package:home_dashboard/models/widget_setting.dart';
 
 class WidgetFactory extends StatelessWidget {
-  final DashboardWidgetBase spec;
+  final WidgetSetting spec;
 
   const WidgetFactory({super.key, required this.spec});
 
@@ -11,12 +12,21 @@ class WidgetFactory extends StatelessWidget {
     return const Center(child: Text('Unimplemented'));
   }
 
+  Widget blank() {
+    return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (spec.type) {
       case 'cctv':
-        CctvWidget cctvWidget = spec as CctvWidget;
-        return CctvPlayer(streamUrl: cctvWidget.streamUrl);
+        CctvWidgetSetting cctvWidget = spec as CctvWidgetSetting;
+        return CctvWidget(cctvWidget);
+      case 'clock':
+        ClockWidgetSetting clockWidget = spec as ClockWidgetSetting;
+        return ClockWidget(clockWidget);
+      case 'blank':
+        return blank();
     }
     return unimplemented();
   }

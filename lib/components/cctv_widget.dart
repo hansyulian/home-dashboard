@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:home_dashboard/models/widget_setting.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
-class CctvPlayer extends StatefulWidget {
-  final String streamUrl; // Add a field to hold the stream URL
+class CctvWidget extends StatefulWidget {
+  final CctvWidgetSetting setting; // Corrected type
 
   // Constructor with named parameter
-  const CctvPlayer({super.key, required this.streamUrl});
+  const CctvWidget(this.setting, {super.key});
 
   @override
-  State<CctvPlayer> createState() => CctvPlayerState();
+  State<CctvWidget> createState() => CctvWidgetState();
 }
 
-class CctvPlayerState extends State<CctvPlayer> {
+class CctvWidgetState extends State<CctvWidget> {
   late final player = Player();
   late final controller = VideoController(player);
 
   @override
   void initState() {
     super.initState();
-    // Access the streamUrl from the widget
-    player.open(Media(widget.streamUrl));
+    // Access the streamUrl from the widget's settings
+    player.open(Media(widget.setting.streamUrl));
   }
 
   @override
