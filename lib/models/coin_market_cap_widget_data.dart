@@ -1,7 +1,7 @@
 import 'package:home_dashboard/utils/safe_parse_double.dart';
 import 'package:home_dashboard/utils/safe_parse_int.dart';
 
-const Map<String, int> coinIds = {
+const Map<String, int> COIN_IDS = {
   'BTC': 1,
   'ETH': 1027,
   'BCH': 1831,
@@ -19,15 +19,19 @@ class CoinMarketCapWidgetData {
   final int id;
   final String name;
   final String symbol;
-  final CoinPriceQuote usdQuote;
-  final CoinPriceQuote btcQuote;
+  final double percentChange24H;
+  final double percentChange7D;
+  final double priceUSD;
+  final double priceBTC;
 
   CoinMarketCapWidgetData(
     this.id,
     this.name,
     this.symbol,
-    this.usdQuote,
-    this.btcQuote,
+    this.priceUSD,
+    this.priceBTC,
+    this.percentChange24H,
+    this.percentChange7D,
   );
 
   factory CoinMarketCapWidgetData.fromJsonResponse(
@@ -36,27 +40,15 @@ class CoinMarketCapWidgetData {
     String name = jsonResponse['name'];
     String symbol = jsonResponse['symbol'];
     Map<String, dynamic> quote = jsonResponse['quote'];
-    CoinPriceQuote usdQuote =
-        CoinPriceQuote.fromJsonResponse(quote['$usdCoinId']);
-    CoinPriceQuote btcQuote =
-        CoinPriceQuote.fromJsonResponse(quote['$btcCoinId']);
-    return CoinMarketCapWidgetData(id, name, symbol, usdQuote, btcQuote);
-  }
-}
-
-class CoinPriceQuote {
-  final double value;
-  final double percentChange24H;
-  final double percentChange7D;
-
-  CoinPriceQuote(this.value, this.percentChange24H, this.percentChange7D);
-
-  factory CoinPriceQuote.fromJsonResponse(Map<String, dynamic> jsonResponse) {
-    double value = safeParseDouble(jsonResponse['price']) ?? 0;
-    double percentChange24H =
-        safeParseDouble(jsonResponse['percentChange24h']) ?? 0;
-    double percentChange7D =
-        safeParseDouble(jsonResponse['percentChange7d']) ?? 0;
-    return CoinPriceQuote(value, percentChange24H, percentChange7D);
+    Map<String, dynamic> btcQuote = quote['$btcCoinId'];
+    Map<String, dynamic> usdQuote = quote['$usdCoinId'];
+    return CoinMarketCapWidgetData(
+        id,
+        name,
+        symbol,
+        safeParseDouble(usdQuote['price']) ?? 0,
+        safeParseDouble(btcQuote['price']) ?? 0,
+        usdQuote['percent_change_24h'],
+        usdQuote['percent_change_7d']);
   }
 }
