@@ -1,3 +1,5 @@
+import 'package:home_dashboard/utils/print_debug.dart';
+
 double? safeParseDouble(dynamic value) {
   if (value is double) {
     return value;
@@ -7,6 +9,7 @@ double? safeParseDouble(dynamic value) {
     try {
       return double.parse(value);
     } catch (e) {
+      printDebug('$e');
       return null;
     }
   } else {
