@@ -30,18 +30,18 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
   void initState() {
     super.initState();
     _coinMarketCapDriver = CoinMarketCapDriver(widget.setting.coinIds);
-    _startRefresher();
+    _startFetcher();
   }
 
-  void _startRefresher() {
-    _refreshCoinData();
+  void _startFetcher() {
+    _fetchCoinData();
     _timer = Timer.periodic(Duration(seconds: widget.setting.refreshInSecond),
         (timer) async {
-      _refreshCoinData();
+      _fetchCoinData();
     });
   }
 
-  void _refreshCoinData() async {
+  void _fetchCoinData() async {
     var responseData = await _coinMarketCapDriver.safeRetrieve();
     setState(() {
       _coinMarketCapWidgetData = responseData;
@@ -56,9 +56,9 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
 
   static Color calculateColor(double value) {
     if (value < 0) {
-      return const Color.fromARGB(255, 255, 41, 41);
+      return Colors.red;
     }
-    return const Color.fromARGB(255, 0, 255, 136);
+    return Colors.green;
   }
 
   double get scaledSize {
@@ -82,58 +82,60 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      child: Table(
-        columnWidths: const {
-          0: FlexColumnWidth(1),
-          1: FlexColumnWidth(1),
-          2: FlexColumnWidth(1),
-          3: FlexColumnWidth(1),
-          4: FlexColumnWidth(1),
-        },
-        border: TableBorder.all(color: Colors.grey, width: 0.5),
-        children: [
-          renderTableHeader(),
-          ..._coinMarketCapWidgetData.map((coinData) {
-            return TableRow(children: [
-              CoinTableCell(
-                  child: Image.network(
-                'https://s2.coinmarketcap.com/static/img/coins/64x64/${coinData.id}.png',
-                height: scaledSize,
-                width: scaledSize,
-              )),
-              CoinTableCell(
-                child: CoinText(
-                  numberValueDisplay(coinData.priceUSD,
-                      targetLength: 2, minimumDecimal: 0),
-                  scaledSize,
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              CoinTableCell(
-                child: SatoshiText(coinData, scaledSize),
-              ),
-              CoinTableCell(
-                child: CoinText(
-                  '${numberValueDisplay(coinData.percentChange24H.abs(), minimumDecimal: 1, targetLength: 1)}%',
-                  scaledSize,
-                  textAlign: TextAlign.right,
-                  color: calculateColor(coinData.percentChange24H),
-                ),
-              ),
-              CoinTableCell(
-                child: CoinText(
-                  '${numberValueDisplay(coinData.percentChange7D.abs(), minimumDecimal: 1, targetLength: 1)}%',
-                  scaledSize,
-                  textAlign: TextAlign.right,
-                  color: calculateColor(coinData.percentChange7D),
-                ),
-              ),
-            ]);
-          }),
-        ],
-      ),
-    );
+        width: double.infinity,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Table(
+            columnWidths: const {
+              0: FlexColumnWidth(1),
+              1: FlexColumnWidth(1),
+              2: FlexColumnWidth(1),
+              3: FlexColumnWidth(1),
+              4: FlexColumnWidth(1),
+            },
+            border: TableBorder.all(color: Colors.grey, width: 0.5),
+            children: [
+              renderTableHeader(),
+              ..._coinMarketCapWidgetData.map((coinData) {
+                return TableRow(children: [
+                  CoinTableCell(
+                      child: Image.network(
+                    'https://s2.coinmarketcap.com/static/img/coins/64x64/${coinData.id}.png',
+                    height: scaledSize,
+                    width: scaledSize,
+                  )),
+                  CoinTableCell(
+                    child: CoinText(
+                      numberValueDisplay(coinData.priceUSD,
+                          targetLength: 2, minimumDecimal: 0),
+                      scaledSize,
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  CoinTableCell(
+                    child: SatoshiText(coinData, scaledSize),
+                  ),
+                  CoinTableCell(
+                    child: CoinText(
+                      '${numberValueDisplay(coinData.percentChange24H.abs(), minimumDecimal: 1, targetLength: 1)}%',
+                      scaledSize,
+                      textAlign: TextAlign.right,
+                      color: calculateColor(coinData.percentChange24H),
+                    ),
+                  ),
+                  CoinTableCell(
+                    child: CoinText(
+                      '${numberValueDisplay(coinData.percentChange7D.abs(), minimumDecimal: 1, targetLength: 1)}%',
+                      scaledSize,
+                      textAlign: TextAlign.right,
+                      color: calculateColor(coinData.percentChange7D),
+                    ),
+                  ),
+                ]);
+              }),
+            ],
+          ),
+        ));
   }
 }
 
