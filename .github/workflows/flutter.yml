@@ -12,13 +12,8 @@ jobs:
     name: Unit tests
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup flutter
-        uses: subsito/flutter-action@v2
-        with:
-          flutter-version: "3.22.3"
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
 
       - name: Install dependencies
         run: flutter pub get
