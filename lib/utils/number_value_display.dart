@@ -16,6 +16,12 @@ String numberValueDisplay(
   }
   String formattedInteger = NumberFormat('#,###').format(integerValue);
   double decimals = value - integerValue;
-  String decimalString = decimals.toStringAsFixed(fractionDigits).substring(2);
-  return '$formattedInteger.$decimalString';
+  String decimalString = decimals.toStringAsFixed(fractionDigits);
+
+  String decimalSubString = '';
+  if (decimalString.length > 2) {
+    decimalSubString = '.${decimalString.substring(2)}';
+  }
+
+  return '$formattedInteger$decimalSubString';
 }

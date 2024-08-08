@@ -21,5 +21,10 @@ void main() {
     test('1264.288248 target length 8 -> 1,264.2882', () {
       expect(numberValueDisplay(1264.288248, targetLength: 8), '1,264.2882');
     });
+
+    test('123.123 target length 1 minimum decimal 0 -> 123', () {
+      expect(numberValueDisplay(123.123, targetLength: 1, minimumDecimal: 0),
+          '123');
+    });
   });
 }
