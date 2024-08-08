@@ -1,10 +1,11 @@
 import 'package:home_dashboard/utils/safe_parse_double.dart';
 import 'package:home_dashboard/utils/safe_parse_int.dart';
 
-const Map<String, int> COIN_IDS = {
+const Map<String, int> coinIdMap = {
   'BTC': 1,
   'ETH': 1027,
   'BCH': 1831,
+  'BNB': 1839,
   'LTC': 2,
   'DFI': 5804,
   'USD': 2781,

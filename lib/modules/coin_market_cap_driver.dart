@@ -24,13 +24,12 @@ class CoinMarketCapDriver {
   }
 
   static Future<CoinMarketCapWidgetData?> getByCoin(String coin) async {
-    if (!COIN_IDS.containsKey(coin)) {
+    if (!coinIdMap.containsKey(coin)) {
       return null;
     }
-    final coinId = COIN_IDS[coin];
+    final coinId = coinIdMap[coin];
     final url = Uri.parse(
         'https://3rdparty-apis.coinmarketcap.com/v1/cryptocurrency/widget?id=$coinId&convert_id=$btcCoinId,$usdCoinId');
-    print(url);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
