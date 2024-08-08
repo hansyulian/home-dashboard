@@ -15,6 +15,8 @@ abstract class WidgetSetting {
         return ClockWidgetSetting.fromJson(json);
       case 'weatherForecast':
         return WeatherForecastWidgetSetting.fromJson(json);
+      case 'homeSensor':
+        return HomeSensorWidgetSetting.fromJson(json);
       case 'blank':
         return BlankWidgetSetting.fromJson(json);
       default:
@@ -58,6 +60,27 @@ class CctvWidgetSetting extends WidgetSetting {
   @override
   Map<String, dynamic> toJson() {
     return {'type': type, 'streamUrl': streamUrl};
+  }
+}
+
+class HomeSensorWidgetSetting extends WidgetSetting {
+  final String apiEndpoint;
+  final int? _refreshInSecond;
+
+  HomeSensorWidgetSetting(this.apiEndpoint, {int? refreshInSecond})
+      : _refreshInSecond = refreshInSecond;
+
+  @override
+  String get type => 'homeSensor';
+
+  factory HomeSensorWidgetSetting.fromJson(Map<String, dynamic> json) {
+    return HomeSensorWidgetSetting(json['apiEndpoint']);
+  }
+  int get refreshInSecond => _refreshInSecond ?? 60;
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': type, 'apiEndpoint': apiEndpoint};
   }
 }
 

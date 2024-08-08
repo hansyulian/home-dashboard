@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:home_dashboard/components/cctv_widget.dart';
 import 'package:home_dashboard/components/clock_widget.dart';
 import 'package:home_dashboard/components/coin_tracker_widget.dart';
+import 'package:home_dashboard/components/home_sensor_widget.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
 
 class WidgetFactory extends StatelessWidget {
@@ -30,6 +31,10 @@ class WidgetFactory extends StatelessWidget {
         CoinTrackerWidgetSetting coinTrackerWidget =
             spec as CoinTrackerWidgetSetting;
         return CoinTrackerWidget(coinTrackerWidget);
+      case 'homeSensor':
+        HomeSensorWidgetSetting waterTorrentWidget =
+            spec as HomeSensorWidgetSetting;
+        return HomeSensorWidget(waterTorrentWidget);
       case 'blank':
         return blank();
     }
