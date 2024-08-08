@@ -1,4 +1,5 @@
 import 'package:home_dashboard/utils/safe_parse_double.dart';
+import 'package:home_dashboard/utils/safe_parse_int.dart';
 
 abstract class WidgetSetting {
   String get type;
@@ -17,7 +18,7 @@ abstract class WidgetSetting {
       case 'blank':
         return BlankWidgetSetting.fromJson(json);
       default:
-        throw ArgumentError('Unknown widget type');
+        return BlankWidgetSetting.fromJson(json);
     }
   }
 
@@ -62,22 +63,40 @@ class CctvWidgetSetting extends WidgetSetting {
 
 // Concrete class for CoinTrackerWidget
 class CoinTrackerWidgetSetting extends WidgetSetting {
-  final List<String> coins;
+  final List<String> coinIds;
+  final int? _refreshInSecond;
+  final double? _size;
 
-  CoinTrackerWidgetSetting(this.coins);
+  CoinTrackerWidgetSetting(this.coinIds, {int? refreshInSecond, double? size})
+      : _refreshInSecond = refreshInSecond,
+        _size = size;
+  static int get defaultRefreshDuration => 60;
 
   @override
   String get type => 'coinTracker';
 
+  double get size => _size ?? 1.0;
+
+  int get refreshInSecond => _refreshInSecond ?? 60;
+
   factory CoinTrackerWidgetSetting.fromJson(Map<String, dynamic> json) {
-    return CoinTrackerWidgetSetting(json['coins']);
+    List<dynamic> coinIdsJson = json['coinIds'];
+    List<String> coinIds = coinIdsJson.cast<String>();
+    int? refreshInSecond = safeParseInt(json['refreshInSecond']);
+    double? size = safeParseDouble(json['size']);
+    return CoinTrackerWidgetSetting(
+      coinIds,
+      refreshInSecond: refreshInSecond,
+      size: size,
+    );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
       'type': type,
-      'coins': coins,
+      'coins': coinIds,
+      'refreshInSeconds': _refreshInSecond
     };
   }
 }

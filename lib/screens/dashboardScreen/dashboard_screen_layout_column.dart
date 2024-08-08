@@ -9,7 +9,6 @@ class DashboardScreenLayoutColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var flex = column.flex ?? 1;
-    print('column flex $flex');
     return Expanded(flex: flex, child: WidgetFactory(spec: column.content));
   }
 }

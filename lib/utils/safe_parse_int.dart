@@ -1,3 +1,5 @@
+import 'package:home_dashboard/utils/print_debug.dart';
+
 int? safeParseInt(dynamic value) {
   if (value is int) {
     return value;
@@ -7,8 +9,8 @@ int? safeParseInt(dynamic value) {
   }
   try {
     return int.parse(value);
-  } catch (err) {
-    print('parseIntError $err');
+  } catch (e) {
+    printDebug('$e');
     return null;
   }
 }
