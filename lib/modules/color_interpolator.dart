@@ -6,7 +6,7 @@ class ColorInterpolator {
 
   ColorInterpolator(this.from, this.to);
 
-  Color interpolate(double ratio) {
+  Color interpolate(num ratio) {
     // Ensure the ratio is between 0.0 and 1.0
     ratio = ratio.clamp(0.0, 1.0);
 

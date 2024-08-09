@@ -6,10 +6,6 @@ import 'package:home_dashboard/models/widget_setting.dart';
 import 'package:home_dashboard/modules/coin_market_cap_driver.dart';
 import 'package:home_dashboard/utils/number_value_display.dart';
 
-const symbolScale = 1.0;
-const usdScale = 1.0;
-const satoshiScale = 0.8;
-const percentageScale = 1.0;
 const headerScale = 1.2;
 const baseSize = 24;
 
@@ -99,15 +95,22 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
               ..._coinMarketCapWidgetData.map((coinData) {
                 return TableRow(children: [
                   CoinTableCell(
-                      child: Image.network(
-                    'https://s2.coinmarketcap.com/static/img/coins/64x64/${coinData.id}.png',
-                    height: scaledSize,
-                    width: scaledSize,
-                  )),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.network(
+                            'https://s2.coinmarketcap.com/static/img/coins/64x64/${coinData.id}.png',
+                            height: scaledSize,
+                            width: scaledSize,
+                          ),
+                          const SizedBox(width: 8),
+                          CoinText(coinData.symbol, scaledSize),
+                        ]),
+                  ),
                   CoinTableCell(
                     child: CoinText(
                       numberValueDisplay(coinData.priceUSD,
-                          targetLength: 2, minimumDecimal: 0),
+                          targetLength: 5, minimumDecimal: 0),
                       scaledSize,
                       textAlign: TextAlign.right,
                     ),
