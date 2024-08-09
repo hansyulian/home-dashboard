@@ -146,24 +146,48 @@ class ClockWidgetSetting extends WidgetSetting {
   }
 }
 
-// Concrete class for WeatherForecastWidget
 class WeatherForecastWidgetSetting extends WidgetSetting {
-  final String apiSource;
+  final int? _refreshInSecond;
+  final String apiKey;
+  final double lat;
+  final double lon;
+  static const defaultRefreshInSecond = 300;
 
-  WeatherForecastWidgetSetting(this.apiSource);
+  WeatherForecastWidgetSetting(this.apiKey, this.lat, this.lon,
+      {int? refreshInSecond})
+      : _refreshInSecond = refreshInSecond;
+
+  int get refreshInSecond {
+    if (_refreshInSecond == null) {
+      return defaultRefreshInSecond;
+    }
+    if (_refreshInSecond < defaultRefreshInSecond) {
+      return defaultRefreshInSecond;
+    }
+    return _refreshInSecond;
+  }
 
   @override
   String get type => 'weatherForecast';
 
   factory WeatherForecastWidgetSetting.fromJson(Map<String, dynamic> json) {
-    return WeatherForecastWidgetSetting(json['apiSource']);
+    String apiKey = json['apiKey'];
+    double lat = json['lat'];
+    double lon = json['lon'];
+    int? refreshInSecond = json['refreshInSecond'];
+
+    return WeatherForecastWidgetSetting(apiKey, lat, lon,
+        refreshInSecond: refreshInSecond);
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
       'type': type,
-      'apiSource': apiSource,
+      'refreshInSecond': _refreshInSecond,
+      'apiKey': apiKey,
+      'lat': lat,
+      'lon': lon,
     };
   }
 }
