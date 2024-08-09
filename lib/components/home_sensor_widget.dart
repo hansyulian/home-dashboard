@@ -54,8 +54,9 @@ class HomeSensorWidgetState extends State<HomeSensorWidget> {
   }
 
   double get torrentRatio {
-    return valueRatio(_sensors.waterTorrent?.value ?? torrentMaxDistance,
-        torrentMinDistance, torrentMaxDistance);
+    return 1 -
+        valueRatio(_sensors.waterTorrent?.value ?? torrentMaxDistance,
+            torrentMinDistance, torrentMaxDistance);
   }
 
   String get torrentLabel {
