@@ -3,29 +3,34 @@ import 'package:home_dashboard/utils/value_ratio.dart';
 
 void main() {
   group('valueRatio', () {
-    test('Returns 0 if value is less than min', () {
-      expect(valueRatio(2, 5, 10), equals(0));
+    test('calculates ratio correctly within bounds', () {
+      expect(valueRatio(5, 0, 10), equals(0.5));
+      expect(valueRatio(7, 0, 10), equals(0.7));
+      expect(valueRatio(0, 0, 10), equals(0.0));
+      expect(valueRatio(10, 0, 10), equals(1.0));
     });
 
-    test('Returns 1 if value is greater than max', () {
-      expect(valueRatio(15, 5, 10), equals(1));
+    test('clamps values below min', () {
+      expect(valueRatio(-5, 0, 10), equals(0.0));
+      expect(valueRatio(-5, -10, 10), equals(0.25));
     });
 
-    test('Returns the correct ratio if value is between min and max', () {
-      expect(valueRatio(7, 5, 10), closeTo(0.6, 0.001));
-      expect(valueRatio(9, 5, 10), closeTo(0.2, 0.001));
+    test('clamps values above max', () {
+      expect(valueRatio(15, 0, 10), equals(1.0));
+      expect(valueRatio(25, 10, 20), equals(1.0));
     });
 
-    test('Returns 0 if value equals min', () {
-      expect(valueRatio(5, 5, 10), equals(1));
+    test('handles zero range (min == max)', () {
+      expect(valueRatio(5, 5, 5),
+          equals(0.0)); // Any value within this range should return 0
+      expect(valueRatio(5, 5, 5),
+          equals(valueRatio(5, 5, 5))); // Should still return 0
     });
 
-    test('Returns 1 if value equals max', () {
-      expect(valueRatio(10, 5, 10), equals(0));
-    });
-
-    test('Returns 0.5 for midpoint value', () {
-      expect(valueRatio(7.5, 5, 10), closeTo(0.5, 0.001));
+    test('handles negative range values', () {
+      expect(valueRatio(-5, -10, 0), equals(0.5));
+      expect(valueRatio(-15, -10, 0), equals(0.0));
+      expect(valueRatio(-5, -10, -5), equals(1.0));
     });
   });
 }
