@@ -15,13 +15,17 @@ class CctvWidget extends StatefulWidget {
 
 class CctvWidgetState extends State<CctvWidget> {
   late final player = Player();
-  late final controller = VideoController(player);
+  late final controller = VideoController(player,
+      configuration: const VideoControllerConfiguration(
+          enableHardwareAcceleration: false));
 
   @override
   void initState() {
     super.initState();
     // Access the streamUrl from the widget's settings
     player.open(Media(widget.setting.streamUrl));
+    player.setAudioTrack(AudioTrack.no());
+    player.setSubtitleTrack(SubtitleTrack.no());
   }
 
   @override
@@ -33,13 +37,9 @@ class CctvWidgetState extends State<CctvWidget> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width * 9.0 / 16.0,
         child: Video(
-          controller: controller,
-        ),
-      ),
-    );
+      controller: controller,
+      controls: NoVideoControls,
+    ));
   }
 }
