@@ -52,7 +52,9 @@ class DashboardScreenState extends State<DashboardScreen> {
     }
     DateTime now = DateTime.now();
     bool inTimeWindow = isInTimeWindow(now, dashboardWidgetSettings!.uptime!);
-    _isActive = inTimeWindow;
+    setState(() {
+      _isActive = inTimeWindow;
+    });
     printDebug('isActive $_isActive');
     DateTime nextAction = getNextTimeOfDay(inTimeWindow
         ? dashboardWidgetSettings!.uptime!.end
@@ -66,7 +68,22 @@ class DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  Widget loadingWidget() {
+  void _enableFor1Minute() {
+    printDebug('click detected');
+    if (_isActive) {
+      return;
+    }
+    setState(() {
+      _isActive = true;
+    });
+    Timer(const Duration(seconds: 60), () {
+      setState(() {
+        _isActive = false;
+      });
+    });
+  }
+
+  Widget _renderLoadingWidget() {
     return const Center(
       child: CircularProgressIndicator(),
     );
@@ -75,8 +92,26 @@ class DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     if (dashboardWidgetSettings == null) {
-      return loadingWidget();
+      return _renderLoadingWidget();
+    }
+    if (!_isActive) {
+      return _renderTemporaryView();
     }
     return DashboardScreenLayout(dashboardWidgetSettings!);
+  }
+
+  Widget _renderTemporaryView() {
+    return GestureDetector(
+        onTap: _enableFor1Minute,
+        child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.transparent,
+            child: const Center(
+                child: Text(
+              'Click anywhere to enable for 1 minute',
+              style: TextStyle(
+                  color: Colors.white, decoration: TextDecoration.none),
+            ))));
   }
 }
