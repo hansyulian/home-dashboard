@@ -9,7 +9,7 @@ class DashboardWidgetSettings {
 
   factory DashboardWidgetSettings.fromJson(Map<String, dynamic> json) {
     TimeWindow? uptime =
-        json['uptime'] ? TimeWindow.fromJson(json['uptime']) : null;
+        json['uptime'] != null ? TimeWindow.fromJson(json['uptime']) : null;
     return DashboardWidgetSettings(
       (json['rows'] as List<dynamic>)
           .map((row) =>
