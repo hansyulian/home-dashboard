@@ -6,8 +6,8 @@ import 'package:home_dashboard/models/widget_setting.dart';
 import 'package:home_dashboard/modules/home_sensor_driver.dart';
 import 'package:home_dashboard/utils/value_ratio.dart';
 
-const torrentMinDistance = 15.0;
-const torrentMaxDistance = 115.0;
+const torrentMinDistance = 20.0;
+const torrentMaxDistance = 120.0;
 
 class HomeSensorWidget extends StatefulWidget {
   final HomeSensorWidgetSetting setting;
