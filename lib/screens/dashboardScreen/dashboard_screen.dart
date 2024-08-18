@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fullscreen_window/fullscreen_window.dart';
 import 'package:home_dashboard/models/dashboard_widget_settings.dart';
 import 'package:home_dashboard/modules/dashboard_config_manager.dart';
 import 'package:home_dashboard/screens/dashboardScreen/dashboard_screen_layout.dart';
@@ -9,6 +8,7 @@ import 'package:home_dashboard/utils/debug_json.dart';
 import 'package:home_dashboard/utils/get_next_time_of_day.dart';
 import 'package:home_dashboard/utils/is_in_time_window.dart';
 import 'package:home_dashboard/utils/print_debug.dart';
+import 'package:window_manager/window_manager.dart';
 
 const waitOffset = 10;
 const defaultFullScreenDelay = 1;
@@ -46,7 +46,7 @@ class DashboardScreenState extends State<DashboardScreen> {
     bool isStartFullScreen = dashboardConfig.startFullscreen ?? false;
     if (isStartFullScreen) {
       Timer(const Duration(seconds: defaultFullScreenDelay), () {
-        FullScreenWindow.setFullScreen(true);
+        windowManager.setFullScreen(true);
       });
     }
 
