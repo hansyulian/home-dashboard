@@ -42,6 +42,7 @@ dependencies:
   test: ^1.25.2
   mockito: ^5.4.4
   intl: ^0.19.0
+  fullscreen_window: ^1.1.0
 
 dev_dependencies:
   flutter_test:
