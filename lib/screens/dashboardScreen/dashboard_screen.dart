@@ -60,9 +60,19 @@ class DashboardScreenState extends State<DashboardScreen> {
     }
     DateTime now = DateTime.now();
     bool inTimeWindow = isInTimeWindow(now, dashboardWidgetSettings!.uptime!);
-    if (!inTimeWindow || dashboardWidgetSettings!.manualClickUptime != true) {
+    if (inTimeWindow) {
+      if (dashboardWidgetSettings!.manualClickUptime != true) {
+        setState(() {
+          _isActive = true;
+        });
+      } else {
+        setState(() {
+          _isWaitingManualActivation = true;
+        });
+      }
+    } else {
       setState(() {
-        _isActive = inTimeWindow;
+        _isActive = false;
       });
     }
     printDebug('isActive $_isActive');
@@ -79,9 +89,10 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _enable() {
-    setState() {
+    setState(() {
+      _isWaitingManualActivation = false;
       _isActive = true;
-    }
+    });
   }
 
   void _enableFor1Minute() {
