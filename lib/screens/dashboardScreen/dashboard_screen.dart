@@ -23,6 +23,7 @@ class DashboardScreen extends StatefulWidget {
 class DashboardScreenState extends State<DashboardScreen> {
   DashboardWidgetSettings? dashboardWidgetSettings;
   bool _isActive = true;
+  bool _isWaitingManualActivation = false;
   late Timer _activeTimer;
 
   @override
@@ -59,9 +60,11 @@ class DashboardScreenState extends State<DashboardScreen> {
     }
     DateTime now = DateTime.now();
     bool inTimeWindow = isInTimeWindow(now, dashboardWidgetSettings!.uptime!);
-    setState(() {
-      _isActive = inTimeWindow;
-    });
+    if (!inTimeWindow || dashboardWidgetSettings!.manualClickUptime != true) {
+      setState(() {
+        _isActive = inTimeWindow;
+      });
+    }
     printDebug('isActive $_isActive');
     DateTime nextAction = getNextTimeOfDay(inTimeWindow
         ? dashboardWidgetSettings!.uptime!.end
@@ -75,8 +78,13 @@ class DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  void _enable() {
+    setState() {
+      _isActive = true;
+    }
+  }
+
   void _enableFor1Minute() {
-    printDebug('click detected');
     if (_isActive) {
       return;
     }
@@ -101,10 +109,28 @@ class DashboardScreenState extends State<DashboardScreen> {
     if (dashboardWidgetSettings == null) {
       return _renderLoadingWidget();
     }
+    if (_isWaitingManualActivation) {
+      return _renderManualActivation();
+    }
     if (!_isActive) {
       return _renderTemporaryView();
     }
     return DashboardScreenLayout(dashboardWidgetSettings!);
+  }
+
+  Widget _renderManualActivation() {
+    return GestureDetector(
+        onTap: _enable,
+        child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.transparent,
+            child: const Center(
+                child: Text(
+              'Click anywhere to enable',
+              style: TextStyle(
+                  color: Colors.white, decoration: TextDecoration.none),
+            ))));
   }
 
   Widget _renderTemporaryView() {
