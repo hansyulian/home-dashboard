@@ -24,6 +24,7 @@ class DashboardScreenState extends State<DashboardScreen> {
   DashboardWidgetSettings? dashboardWidgetSettings;
   bool _isActive = true;
   bool _isWaitingManualActivation = false;
+  bool _isInitializing = true;
   late Timer _activeTimer;
 
   @override
@@ -52,6 +53,7 @@ class DashboardScreenState extends State<DashboardScreen> {
     }
 
     _startTimer();
+    _isInitializing = false;
   }
 
   void _startTimer() {
@@ -60,9 +62,20 @@ class DashboardScreenState extends State<DashboardScreen> {
     }
     DateTime now = DateTime.now();
     bool inTimeWindow = isInTimeWindow(now, dashboardWidgetSettings!.uptime!);
-    if (!inTimeWindow || dashboardWidgetSettings!.manualClickUptime != true) {
+    if (inTimeWindow) {
+      if (dashboardWidgetSettings!.manualClickUptime != true ||
+          _isInitializing == true) {
+        setState(() {
+          _isActive = true;
+        });
+      } else {
+        setState(() {
+          _isWaitingManualActivation = true;
+        });
+      }
+    } else {
       setState(() {
-        _isActive = inTimeWindow;
+        _isActive = false;
       });
     }
     printDebug('isActive $_isActive');
@@ -79,9 +92,10 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _enable() {
-    setState() {
+    setState(() {
+      _isWaitingManualActivation = false;
       _isActive = true;
-    }
+    });
   }
 
   void _enableFor1Minute() {
