@@ -28,10 +28,14 @@ class TomorrowIODriver {
   final String apiKey;
   final double lat;
   final double lon;
+  final bool mock;
 
-  TomorrowIODriver(this.apiKey, this.lat, this.lon);
+  TomorrowIODriver(this.apiKey, this.lat, this.lon, {this.mock = false});
 
   Future<List<WeatherForecast>> safeFetch() async {
+    if (mock) {
+      return safeFetchMock();
+    }
     final uri = Uri.parse('https://api.tomorrow.io/v4/timelines');
     final response = await http.post(
       uri,
@@ -66,5 +70,23 @@ class TomorrowIODriver {
       return result;
     }
     return [];
+  }
+
+  Future<List<WeatherForecast>> safeFetchMock() async {
+    List<WeatherForecast> result = [];
+    var now = DateTime.now();
+    for (var i = 0; i < 30; i++) {
+      double temperature = 15.0 + (12 - i).abs();
+      var weatherType =
+          temperature < 20 ? WeatherType.rainy : WeatherType.clear;
+      var hour = now.hour + i;
+      var day = hour > 24 ? now.day + 1 : now.day;
+      var dateTime = DateTime(now.year, now.month, day, hour % 24, 0, 0);
+      double rainIntensity =
+          weatherType == WeatherType.rainy ? 10 - (i * 0.1) : 0;
+      result.add(WeatherForecast(
+          weatherType, dateTime.toString(), rainIntensity, temperature));
+    }
+    return result;
   }
 }
