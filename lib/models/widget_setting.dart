@@ -17,6 +17,8 @@ abstract class WidgetSetting {
         return WeatherForecastWidgetSetting.fromJson(json);
       case 'homeSensor':
         return HomeSensorWidgetSetting.fromJson(json);
+      case 'homeServerInfo':
+        return HomeServerInfoWidgetSetting.fromJson(json);
       case 'blank':
         return BlankWidgetSetting.fromJson(json);
       default:
@@ -151,10 +153,12 @@ class WeatherForecastWidgetSetting extends WidgetSetting {
   final String apiKey;
   final double lat;
   final double lon;
+  final bool mock;
+  final String variant;
   static const defaultRefreshInSecond = 300;
 
-  WeatherForecastWidgetSetting(this.apiKey, this.lat, this.lon,
-      {int? refreshInSecond})
+  WeatherForecastWidgetSetting(this.apiKey, this.lat, this.lon, this.variant,
+      {int? refreshInSecond, this.mock = false})
       : _refreshInSecond = refreshInSecond;
 
   int get refreshInSecond {
@@ -175,9 +179,11 @@ class WeatherForecastWidgetSetting extends WidgetSetting {
     double lat = json['lat'];
     double lon = json['lon'];
     int? refreshInSecond = json['refreshInSecond'];
+    bool mock = json['mock'] == true;
+    String variant = json['variant'] ?? "default";
 
-    return WeatherForecastWidgetSetting(apiKey, lat, lon,
-        refreshInSecond: refreshInSecond);
+    return WeatherForecastWidgetSetting(apiKey, lat, lon, variant,
+        refreshInSecond: refreshInSecond, mock: mock);
   }
 
   @override
@@ -188,6 +194,28 @@ class WeatherForecastWidgetSetting extends WidgetSetting {
       'apiKey': apiKey,
       'lat': lat,
       'lon': lon,
+      'mock': mock,
     };
+  }
+}
+
+class HomeServerInfoWidgetSetting extends WidgetSetting {
+  final String apiEndpoint;
+  final int? _refreshInSecond;
+
+  HomeServerInfoWidgetSetting(this.apiEndpoint, {int? refreshInSecond})
+      : _refreshInSecond = refreshInSecond;
+
+  @override
+  String get type => 'homeServerInfo';
+
+  factory HomeServerInfoWidgetSetting.fromJson(Map<String, dynamic> json) {
+    return HomeServerInfoWidgetSetting(json['apiEndpoint']);
+  }
+  int get refreshInSecond => _refreshInSecond ?? 1;
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': type, 'apiEndpoint': apiEndpoint};
   }
 }

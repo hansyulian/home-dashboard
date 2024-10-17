@@ -61,7 +61,7 @@ class HomeSensorWidgetState extends State<HomeSensorWidget> {
 
   String get torrentLabel {
     var percentage = (torrentRatio * 100).toStringAsFixed(0);
-    return '$percentage %';
+    return percentage;
   }
 
   Color get torrentColor {

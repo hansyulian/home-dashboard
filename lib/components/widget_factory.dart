@@ -3,6 +3,7 @@ import 'package:home_dashboard/components/cctv_widget.dart';
 import 'package:home_dashboard/components/clock_widget.dart';
 import 'package:home_dashboard/components/coin_tracker_widget.dart';
 import 'package:home_dashboard/components/home_sensor_widget.dart';
+import 'package:home_dashboard/components/home_server_info_widget.dart';
 import 'package:home_dashboard/components/weather_forecast_widget.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
 
@@ -40,6 +41,10 @@ class WidgetFactory extends StatelessWidget {
         WeatherForecastWidgetSetting weatherForecastWidgetSetting =
             spec as WeatherForecastWidgetSetting;
         return WeatherForecastWidget(weatherForecastWidgetSetting);
+      case 'homeServerInfo':
+        HomeServerInfoWidgetSetting homeServerInfoWidgetSetting =
+            spec as HomeServerInfoWidgetSetting;
+        return HomeServerInfoWidget(homeServerInfoWidgetSetting);
       case 'blank':
         return blank();
     }
