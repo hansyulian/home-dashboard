@@ -74,9 +74,7 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
         renderSystem(),
         renderPings(),
         renderHdds(),
-        Row(
-          children: [renderZpool()],
-        )
+        renderZpool()
       ]),
     );
   }
@@ -126,6 +124,9 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
         shouldVisible = true;
       }
     }
+    if (!shouldVisible) {
+      return Container();
+    }
 
     return Column(
       children: [
@@ -171,22 +172,31 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
   }
 
   Widget renderZpool() {
-    if (_info.zpool.state == 'ONLINE') {
+    bool hasWarning = _info.zpool.state != 'ONLINE';
+    if (!hasWarning) {
       return Container();
     }
-    return Container(
-        child: renderText('${_info.zpool.name}: ${_info.zpool.state}'));
+    return Column(children: [
+      Space(),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [renderText("Warnings", color: Colors.red)]),
+      Space(),
+      renderText('${_info.zpool.name}: ${_info.zpool.state}', color: Colors.red)
+    ]);
   }
 
-  Widget renderText(String text) {
-    return Text(text,
-        style: const TextStyle(
-          color: Color(0xFFFFFFFF),
-          fontSize: 16,
-          height: 1.0,
-          fontWeight: FontWeight.w300,
-          decoration: TextDecoration.none,
-        ));
+  Widget renderText(String text, {Color color = Colors.white}) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: color,
+        fontSize: 16,
+        height: 1.0,
+        fontWeight: FontWeight.w300,
+        decoration: TextDecoration.none,
+      ),
+    );
   }
 }
 
