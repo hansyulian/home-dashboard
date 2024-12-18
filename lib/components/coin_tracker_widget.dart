@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:home_dashboard/models/coin_market_cap_api_data.dart';
 import 'package:home_dashboard/models/coin_market_cap_widget_data.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
+import 'package:home_dashboard/modules/coin_market_cap_api.dart';
 import 'package:home_dashboard/modules/coin_market_cap_driver.dart';
 import 'package:home_dashboard/utils/number_value_display.dart';
 
@@ -19,13 +21,14 @@ class CoinTrackerWidget extends StatefulWidget {
 
 class CoinTrackerState extends State<CoinTrackerWidget> {
   late Timer _timer;
-  late CoinMarketCapDriver _coinMarketCapDriver;
-  List<CoinMarketCapWidgetData> _coinMarketCapWidgetData = [];
+  late CoinMarketCapApi _coinMarketCapApi;
+  List<CoinMarketCapApiData> _coinMarketCapApiData = [];
 
   @override
   void initState() {
     super.initState();
-    _coinMarketCapDriver = CoinMarketCapDriver(widget.setting.coinIds);
+    _coinMarketCapApi =
+        CoinMarketCapApi(widget.setting.apiKey, widget.setting.coinSymbols);
     _startFetcher();
   }
 
@@ -38,9 +41,9 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
   }
 
   void _fetchCoinData() async {
-    var responseData = await _coinMarketCapDriver.safeRetrieve();
+    var responseData = await _coinMarketCapApi.getAll();
     setState(() {
-      _coinMarketCapWidgetData = responseData;
+      _coinMarketCapApiData = responseData;
     });
   }
 
@@ -92,7 +95,7 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
             border: TableBorder.all(color: Colors.grey, width: 0.5),
             children: [
               renderTableHeader(),
-              ..._coinMarketCapWidgetData.map((coinData) {
+              ..._coinMarketCapApiData.map((coinData) {
                 return TableRow(children: [
                   CoinTableCell(
                     child: Row(
@@ -143,7 +146,7 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
 }
 
 class SatoshiText extends StatelessWidget {
-  final CoinMarketCapWidgetData coinData;
+  final CoinMarketCapApiData coinData;
   final double size;
   const SatoshiText(this.coinData, this.size, {super.key});
 

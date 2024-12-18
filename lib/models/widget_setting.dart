@@ -88,11 +88,13 @@ class HomeSensorWidgetSetting extends WidgetSetting {
 
 // Concrete class for CoinTrackerWidget
 class CoinTrackerWidgetSetting extends WidgetSetting {
-  final List<String> coinIds;
+  final List<String> coinSymbols;
   final int? _refreshInSecond;
   final double? _size;
+  final String _apiKey;
 
-  CoinTrackerWidgetSetting(this.coinIds, {int? refreshInSecond, double? size})
+  CoinTrackerWidgetSetting(this.coinSymbols, this._apiKey,
+      {int? refreshInSecond, double? size})
       : _refreshInSecond = refreshInSecond,
         _size = size;
   static int get defaultRefreshDuration => 60;
@@ -104,13 +106,17 @@ class CoinTrackerWidgetSetting extends WidgetSetting {
 
   int get refreshInSecond => _refreshInSecond ?? 60;
 
+  String get apiKey => _apiKey;
+
   factory CoinTrackerWidgetSetting.fromJson(Map<String, dynamic> json) {
-    List<dynamic> coinIdsJson = json['coinIds'];
-    List<String> coinIds = coinIdsJson.cast<String>();
+    List<dynamic> coinSymbolsJson = json['coinSymbols'];
+    List<String> coinSymbols = coinSymbolsJson.cast<String>();
     int? refreshInSecond = safeParseInt(json['refreshInSecond']);
     double? size = safeParseDouble(json['size']);
+    String apiKey = json['apiKey'];
     return CoinTrackerWidgetSetting(
-      coinIds,
+      coinSymbols,
+      apiKey,
       refreshInSecond: refreshInSecond,
       size: size,
     );
@@ -120,8 +126,9 @@ class CoinTrackerWidgetSetting extends WidgetSetting {
   Map<String, dynamic> toJson() {
     return {
       'type': type,
-      'coins': coinIds,
-      'refreshInSeconds': _refreshInSecond
+      'coins': coinSymbols,
+      'refreshInSeconds': _refreshInSecond,
+      'apiKey': _apiKey,
     };
   }
 }
