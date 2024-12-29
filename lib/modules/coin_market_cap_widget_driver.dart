@@ -1,13 +1,15 @@
 import 'dart:convert';
 
 import 'package:home_dashboard/models/coin_market_cap_widget_data.dart';
+import 'package:home_dashboard/models/coin_tracker_data.dart';
+import 'package:home_dashboard/modules/coin_tracker_driver_base.dart';
 import 'package:home_dashboard/utils/print_debug.dart';
 import 'package:http/http.dart' as http;
 
-class CoinMarketCapDriver {
+class CoinMarketCapWidgetDriver extends CoinTrackerDriverBase {
   final List<String> coinIds;
 
-  CoinMarketCapDriver(this.coinIds);
+  CoinMarketCapWidgetDriver(this.coinIds);
 
   Future<List<CoinMarketCapWidgetData>> safeRetrieve() async {
     List<CoinMarketCapWidgetData?> retrievedData =
@@ -45,5 +47,20 @@ class CoinMarketCapDriver {
       printDebug('Request error $err');
       return null;
     }
+  }
+
+  @override
+  Future<List<CoinTrackerData>> getAll() async {
+    var data = await safeRetrieve();
+    return data.map((record) {
+      return CoinTrackerData(
+          record.id,
+          record.name,
+          record.symbol,
+          record.priceUSD,
+          record.priceBTC,
+          record.percentChange24H,
+          record.percentChange7D);
+    }).toList();
   }
 }

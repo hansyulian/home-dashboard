@@ -1,16 +1,18 @@
 import 'package:home_dashboard/models/coin_market_cap_api_data.dart';
+import 'package:home_dashboard/models/coin_tracker_data.dart';
+import 'package:home_dashboard/modules/coin_tracker_driver_base.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class CoinMarketCapApi {
+class CoinMarketCapApiDriver extends CoinTrackerDriverBase {
   final List<String> coinSymbols;
   static const String _baseUrl =
       'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest';
   final String _apiKey;
 
-  CoinMarketCapApi(this._apiKey, this.coinSymbols);
+  CoinMarketCapApiDriver(this._apiKey, this.coinSymbols);
 
-  Future<List<CoinMarketCapApiData>> getAll() async {
+  Future<List<CoinMarketCapApiData>> retrieveAll() async {
     try {
       // Ensure BTC is included in the query
       final updatedSymbols = List<String>.from(coinSymbols);
@@ -62,5 +64,21 @@ class CoinMarketCapApi {
     } catch (e) {
       throw Exception('Error fetching data: $e');
     }
+  }
+
+  @override
+  Future<List<CoinTrackerData>> getAll() async {
+    var data = await retrieveAll();
+    return data.map((record) {
+      return CoinTrackerData(
+        record.id,
+        record.name,
+        record.symbol,
+        record.priceUSD,
+        record.priceBTC,
+        record.percentChange24H,
+        record.percentChange7D,
+      );
+    }).toList();
   }
 }

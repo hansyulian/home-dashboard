@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:home_dashboard/models/coin_market_cap_api_data.dart';
 import 'package:home_dashboard/models/coin_market_cap_widget_data.dart';
+import 'package:home_dashboard/models/coin_tracker_data.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
-import 'package:home_dashboard/modules/coin_market_cap_api.dart';
-import 'package:home_dashboard/modules/coin_market_cap_driver.dart';
+import 'package:home_dashboard/modules/coin_market_cap_api_driver.dart';
+import 'package:home_dashboard/modules/coin_market_cap_widget_driver.dart';
+import 'package:home_dashboard/modules/coin_tracker_driver.dart';
 import 'package:home_dashboard/utils/number_value_display.dart';
 
 const headerScale = 1.2;
@@ -21,14 +23,13 @@ class CoinTrackerWidget extends StatefulWidget {
 
 class CoinTrackerState extends State<CoinTrackerWidget> {
   late Timer _timer;
-  late CoinMarketCapApi _coinMarketCapApi;
-  List<CoinMarketCapApiData> _coinMarketCapApiData = [];
+  late CoinTrackerDriver _coinTrackerDriver;
+  List<CoinTrackerData> _coinTrackerData = [];
 
   @override
   void initState() {
     super.initState();
-    _coinMarketCapApi =
-        CoinMarketCapApi(widget.setting.apiKey, widget.setting.coinSymbols);
+    _coinTrackerDriver = CoinTrackerDriver(widget.setting);
     _startFetcher();
   }
 
@@ -41,9 +42,9 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
   }
 
   void _fetchCoinData() async {
-    var responseData = await _coinMarketCapApi.getAll();
+    var responseData = await _coinTrackerDriver.getAll();
     setState(() {
-      _coinMarketCapApiData = responseData;
+      _coinTrackerData = responseData;
     });
   }
 
@@ -95,7 +96,7 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
             border: TableBorder.all(color: Colors.grey, width: 0.5),
             children: [
               renderTableHeader(),
-              ..._coinMarketCapApiData.map((coinData) {
+              ..._coinTrackerData.map((coinData) {
                 return TableRow(children: [
                   CoinTableCell(
                     child: Row(
@@ -146,7 +147,7 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
 }
 
 class SatoshiText extends StatelessWidget {
-  final CoinMarketCapApiData coinData;
+  final CoinTrackerData coinData;
   final double size;
   const SatoshiText(this.coinData, this.size, {super.key});
 

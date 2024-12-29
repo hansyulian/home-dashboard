@@ -91,32 +91,38 @@ class CoinTrackerWidgetSetting extends WidgetSetting {
   final List<String> coinSymbols;
   final int? _refreshInSecond;
   final double? _size;
-  final String _apiKey;
+  final String? _apiKey;
+  final String? _driver;
 
-  CoinTrackerWidgetSetting(this.coinSymbols, this._apiKey,
-      {int? refreshInSecond, double? size})
+  CoinTrackerWidgetSetting(this.coinSymbols,
+      {int? refreshInSecond, double? size, String? apiKey, String? driver})
       : _refreshInSecond = refreshInSecond,
-        _size = size;
+        _size = size,
+        _apiKey = apiKey,
+        _driver = driver;
   static int get defaultRefreshDuration => 60;
 
   @override
   String get type => 'coinTracker';
+  String get driver => _driver ?? 'coinMarketCapWidget';
 
   double get size => _size ?? 1.0;
 
   int get refreshInSecond => _refreshInSecond ?? 60;
 
-  String get apiKey => _apiKey;
+  String? get apiKey => _apiKey;
 
   factory CoinTrackerWidgetSetting.fromJson(Map<String, dynamic> json) {
     List<dynamic> coinSymbolsJson = json['coinSymbols'];
     List<String> coinSymbols = coinSymbolsJson.cast<String>();
     int? refreshInSecond = safeParseInt(json['refreshInSecond']);
     double? size = safeParseDouble(json['size']);
-    String apiKey = json['apiKey'];
+    String? apiKey = json['apiKey'];
+    String? driver = json['driver'];
     return CoinTrackerWidgetSetting(
       coinSymbols,
-      apiKey,
+      driver: driver ?? 'coinMarketCapWidget',
+      apiKey: apiKey,
       refreshInSecond: refreshInSecond,
       size: size,
     );
@@ -129,6 +135,7 @@ class CoinTrackerWidgetSetting extends WidgetSetting {
       'coins': coinSymbols,
       'refreshInSeconds': _refreshInSecond,
       'apiKey': _apiKey,
+      'driver': _driver,
     };
   }
 }
