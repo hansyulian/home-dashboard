@@ -1,18 +1,6 @@
 import 'package:home_dashboard/utils/safe_parse_double.dart';
 import 'package:home_dashboard/utils/safe_parse_int.dart';
 
-const Map<String, int> coinIdMap = {
-  'BTC': 1,
-  'ETH': 1027,
-  'BCH': 1831,
-  'BNB': 1839,
-  'LTC': 2,
-  'DFI': 5804,
-  'USD': 2781,
-  'SOL': 5426,
-  'DOT': 6636,
-  'MATIC': 3890,
-};
 const btcCoinId = 1;
 const usdCoinId = 2781;
 
@@ -36,20 +24,15 @@ class CoinMarketCapWidgetData {
   );
 
   factory CoinMarketCapWidgetData.fromJsonResponse(
-      Map<String, dynamic> jsonResponse) {
+      Map<String, dynamic> jsonResponse, double btcPriceUSD) {
     int id = safeParseInt(jsonResponse['id']) ?? 0;
     String name = jsonResponse['name'];
     String symbol = jsonResponse['symbol'];
     Map<String, dynamic> quote = jsonResponse['quote'];
-    Map<String, dynamic> btcQuote = quote['$btcCoinId'];
     Map<String, dynamic> usdQuote = quote['$usdCoinId'];
-    return CoinMarketCapWidgetData(
-        id,
-        name,
-        symbol,
-        safeParseDouble(usdQuote['price']) ?? 0,
-        safeParseDouble(btcQuote['price']) ?? 0,
-        usdQuote['percent_change_24h'],
-        usdQuote['percent_change_7d']);
+    final usdPrice = usdQuote['price'] ?? 0;
+    final btcPrice = usdPrice / btcPriceUSD;
+    return CoinMarketCapWidgetData(id, name, symbol, usdPrice, btcPrice,
+        usdQuote['percent_change_24h'], usdQuote['percent_change_7d']);
   }
 }

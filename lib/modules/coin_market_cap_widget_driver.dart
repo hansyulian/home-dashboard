@@ -7,45 +7,40 @@ import 'package:home_dashboard/utils/print_debug.dart';
 import 'package:http/http.dart' as http;
 
 class CoinMarketCapWidgetDriver extends CoinTrackerDriverBase {
-  final List<String> coinIds;
+  final List<String> coinSymbols;
 
-  CoinMarketCapWidgetDriver(this.coinIds);
+  CoinMarketCapWidgetDriver(this.coinSymbols);
 
   Future<List<CoinMarketCapWidgetData>> safeRetrieve() async {
-    List<CoinMarketCapWidgetData?> retrievedData =
-        await Future.wait(coinIds.map((coinId) {
-      return getByCoin(coinId);
-    }));
-    List<CoinMarketCapWidgetData> result = [];
-    for (var item in retrievedData) {
-      if (item != null) {
-        result.add(item);
-      }
-    }
-    return result;
-  }
-
-  static Future<CoinMarketCapWidgetData?> getByCoin(String coin) async {
-    if (!coinIdMap.containsKey(coin)) {
-      return null;
-    }
-    final coinId = coinIdMap[coin];
+    final coinSymbolsJoin = coinSymbols.join(',');
     final url = Uri.parse(
-        'https://3rdparty-apis.coinmarketcap.com/v1/cryptocurrency/widget?id=$coinId&convert_id=$btcCoinId,$usdCoinId');
+        'https://3rdparty-apis.coinmarketcap.com/v1/cryptocurrency/widget?symbol=$coinSymbolsJoin,BTC&convert_id=$usdCoinId,1');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final jsonBody = json.decode(response.body);
-        final result = CoinMarketCapWidgetData.fromJsonResponse(
-            jsonBody['data']['$coinId']);
+        final data = jsonBody['data'];
+        List<CoinMarketCapWidgetData> result = [];
+        double btcPriceUSD = 0;
+        data.forEach((key, value) {
+          if (value['symbol'] != "BTC") {
+            return;
+          }
+          btcPriceUSD = value['quote']['$usdCoinId']['price'];
+        });
+        data.forEach((key, value) {
+          CoinMarketCapWidgetData record =
+              CoinMarketCapWidgetData.fromJsonResponse(value, btcPriceUSD);
+          result.add(record);
+        });
         return result;
       } else {
         printDebug('Request failed ${response.body}');
-        return null;
+        return [];
       }
     } catch (err) {
       printDebug('Request error $err');
-      return null;
+      return [];
     }
   }
 

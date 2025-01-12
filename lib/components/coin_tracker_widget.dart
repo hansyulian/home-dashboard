@@ -1,12 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:home_dashboard/models/coin_market_cap_api_data.dart';
 import 'package:home_dashboard/models/coin_market_cap_widget_data.dart';
 import 'package:home_dashboard/models/coin_tracker_data.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
-import 'package:home_dashboard/modules/coin_market_cap_api_driver.dart';
-import 'package:home_dashboard/modules/coin_market_cap_widget_driver.dart';
 import 'package:home_dashboard/modules/coin_tracker_driver.dart';
 import 'package:home_dashboard/utils/number_value_display.dart';
 
