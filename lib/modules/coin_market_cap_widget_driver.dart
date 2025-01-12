@@ -33,6 +33,9 @@ class CoinMarketCapWidgetDriver extends CoinTrackerDriverBase {
               CoinMarketCapWidgetData.fromJsonResponse(value, btcPriceUSD);
           result.add(record);
         });
+        result.sort((a, b) => coinSymbols
+            .indexOf(a.symbol)
+            .compareTo(coinSymbols.indexOf(b.symbol)));
         return result;
       } else {
         printDebug('Request failed ${response.body}');
