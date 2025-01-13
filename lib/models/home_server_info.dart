@@ -6,13 +6,13 @@ class HomeServerInfo {
   final HomeServerSystemInfo system;
   final List<HomeServerHddInfo> hdds;
   final List<HomeServerPingInfo> pings;
-  final HomeServerZpoolInfo zpool;
+  // final HomeServerZpoolInfo zpool;
 
   HomeServerInfo(
     this.system,
     this.hdds,
     this.pings,
-    this.zpool,
+    // this.zpool,
   );
 
   factory HomeServerInfo.fromJson(Map<String, dynamic> json) {
@@ -25,9 +25,9 @@ class HomeServerInfo {
     List<HomeServerPingInfo> pings = pingsJson
         .map((pingJson) => HomeServerPingInfo.fromJson(pingJson))
         .toList();
-    var zpoolJson = json['zpool'];
-    var zpool = HomeServerZpoolInfo.fromJson(zpoolJson);
-    return HomeServerInfo(system, hdds, pings, zpool);
+    // var zpoolJson = json['zpool'];
+    // var zpool = HomeServerZpoolInfo.fromJson(zpoolJson);
+    return HomeServerInfo(system, hdds, pings);
   }
 
   Map<String, dynamic> toJson() {
@@ -35,7 +35,7 @@ class HomeServerInfo {
       'system': system.toJson(),
       'hdds': hdds.map((hdd) => hdd.toJson()).toList(),
       'pings': pings.map((ping) => ping.toJson()).toList(),
-      'zpool': zpool.toJson(),
+      // 'zpool': zpool.toJson(),
     };
   }
 }

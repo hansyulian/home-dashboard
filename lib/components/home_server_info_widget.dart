@@ -34,14 +34,15 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
     super.initState();
     _homeServerInfoDriver = HomeServerInfoDriver(widget.setting.apiEndpoint);
     _info = HomeServerInfo(
-        HomeServerSystemInfo(
-          HomeServerSystemCpuInfo(null, null),
-          HomeServerSystemNetworkInfo(null, null, null),
-          HomeServerSystemMemoryInfo(null, null),
-        ),
-        [],
-        [],
-        HomeServerZpoolInfo('', '', '', '', '', []));
+      HomeServerSystemInfo(
+        HomeServerSystemCpuInfo(null, null),
+        HomeServerSystemNetworkInfo(null, null, null),
+        HomeServerSystemMemoryInfo(null, null),
+      ),
+      [],
+      [],
+      // HomeServerZpoolInfo('', '', '', '', '', [])
+    );
     _fetchData();
     _startFetcher();
   }
@@ -74,7 +75,7 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
         renderSystem(),
         renderPings(),
         renderHdds(),
-        renderZpool()
+        // renderZpool()
       ]),
     );
   }
@@ -171,20 +172,20 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
     );
   }
 
-  Widget renderZpool() {
-    bool hasWarning = _info.zpool.state != 'ONLINE';
-    if (!hasWarning) {
-      return Container();
-    }
-    return Column(children: [
-      Space(),
-      Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [renderText("Warnings", color: Colors.red)]),
-      Space(),
-      renderText('${_info.zpool.name}: ${_info.zpool.state}', color: Colors.red)
-    ]);
-  }
+  // Widget renderZpool() {
+  //   bool hasWarning = _info.zpool.state != 'ONLINE';
+  //   if (!hasWarning) {
+  //     return Container();
+  //   }
+  //   return Column(children: [
+  //     Space(),
+  //     Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [renderText("Warnings", color: Colors.red)]),
+  //     Space(),
+  //     renderText('${_info.zpool.name}: ${_info.zpool.state}', color: Colors.red)
+  //   ]);
+  // }
 
   Widget renderText(String text, {Color color = Colors.white}) {
     return Text(
