@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:home_dashboard/components/coin_tracker_widget.dart';
 import 'package:home_dashboard/components/grid.dart';
 import 'package:home_dashboard/components/space.dart';
 import 'package:home_dashboard/models/home_server_info.dart';
@@ -167,8 +166,37 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
       ]));
       children.add(Space());
     }
+    children.add(renderPingGraph());
     return Column(
       children: children,
+    );
+  }
+
+  Widget renderPingGraph() {
+    // Map pingInfos to list of histories, replacing null values with 0.0
+    final pingInfos = _info.pings.map((pingInfo) => pingInfo.history).toList();
+
+    return SizedBox(
+      height: 100,
+      child: SfCartesianChart(
+        primaryXAxis: const CategoryAxis(),
+        primaryYAxis: const NumericAxis(
+          minimum: 0,
+          maximum: 50,
+          interval: 10,
+          labelFormat: '{value}ms',
+        ),
+        series: pingInfos
+            .map((pingInfo) => LineSeries<double, int>(
+                  dataSource: pingInfo,
+                  xValueMapper: (_, index) => index, // Map index as x-axis
+                  yValueMapper: (ping, _) => ping, // Map ping values as y-axis
+                  animationDuration: 0, // Disable animation
+                  dataLabelSettings: const DataLabelSettings(isVisible: false),
+                  enableTooltip: true,
+                ))
+            .toList(),
+      ),
     );
   }
 

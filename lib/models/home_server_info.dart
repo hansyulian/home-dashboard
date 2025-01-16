@@ -74,19 +74,26 @@ class HomeServerHddInfo {
 class HomeServerPingInfo {
   final String target;
   final double? result;
+  final List<double> history;
 
-  HomeServerPingInfo(this.target, this.result);
+  HomeServerPingInfo(this.target, this.result, this.history);
 
   factory HomeServerPingInfo.fromJson(Map<String, dynamic> json) {
     String target = json['target'];
     double? result = safeParseDouble(json['result']);
-    return HomeServerPingInfo(target, result);
+    List<dynamic> historyJson = json['history'] as List<dynamic>;
+    List<double> history = historyJson
+        .map((record) => safeParseDouble(record) ?? 0.0)
+        .toList()
+        .cast<double>();
+    return HomeServerPingInfo(target, result, history);
   }
 
   Map<String, dynamic> toJson() {
     return {
       'target': target,
       'result': result,
+      'history': history,
     };
   }
 }
