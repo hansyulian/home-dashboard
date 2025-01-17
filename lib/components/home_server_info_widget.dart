@@ -25,6 +25,7 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
   late Timer _timer;
   late HomeServerInfoDriver _homeServerInfoDriver;
   late HomeServerInfo _info;
+  double maxScale = 0.0;
 
   HomeServerInfoWidgetState() {}
 
@@ -174,28 +175,85 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
 
   Widget renderPingGraph() {
     // Map pingInfos to list of histories, replacing null values with 0.0
-    final pingInfos = _info.pings.map((pingInfo) => pingInfo.history).toList();
+    List<PingDataHolder> pingDataHolders = _info.pings.map((pingInfo) {
+      double min = double.infinity;
+      double max = 0;
+      double average = 0;
+      int total = 0;
+      List<double> scaledValues = [];
+
+      for (var value in pingInfo.history) {
+        if (value != 0) {
+          min = min < value ? min : value;
+          max = max > value ? max : value;
+          average += value;
+          total += 1;
+          scaledValues.add(value);
+        } else {
+          scaledValues.add(-1);
+        }
+      }
+
+      if (total > 0) {
+        average = average / total;
+      }
+
+      for (var i = 0; i < scaledValues.length; i++) {
+        if (scaledValues[i] >= 0) {
+          var valueScale = (scaledValues[i] - min) / (max - min);
+          scaledValues[i] = valueScale;
+        }
+      }
+
+      return PingDataHolder(
+        scaledValues,
+        min,
+        max,
+        average,
+      );
+    }).toList(); // Convert map iterable to list.
+
+    pingDataHolders.sort((a, b) => a.average.compareTo(b.average));
 
     return SizedBox(
       height: 100,
       child: SfCartesianChart(
-        primaryXAxis: const CategoryAxis(),
-        primaryYAxis: const NumericAxis(
-          minimum: 0,
-          maximum: 50,
-          interval: 10,
-          labelFormat: '{value}ms',
+        primaryXAxis: const CategoryAxis(
+          isVisible: false,
         ),
-        series: pingInfos
-            .map((pingInfo) => LineSeries<double, int>(
-                  dataSource: pingInfo,
-                  xValueMapper: (_, index) => index, // Map index as x-axis
-                  yValueMapper: (ping, _) => ping, // Map ping values as y-axis
-                  animationDuration: 0, // Disable animation
-                  dataLabelSettings: const DataLabelSettings(isVisible: false),
-                  enableTooltip: true,
-                ))
-            .toList(),
+        primaryYAxis: NumericAxis(
+          isVisible: false,
+          minimum: 0,
+          maximum: pingDataHolders.length * 4,
+        ),
+        series: pingDataHolders.asMap().entries.map((entry) {
+          int index = entry.key;
+          PingDataHolder data = entry.value;
+
+          // Map scaled values for each series
+          final pingInfo = data.scaledValues.map((sv) {
+            return sv == -1 ? 0.0 : sv + index * 4.0 + 1.0;
+          }).toList();
+
+          // Create a LineSeries for each PingDataHolder
+          return LineSeries<double, int>(
+            dataSource: pingInfo,
+            xValueMapper: (_, idx) => idx, // Map index as x-axis
+            yValueMapper: (ping, _) => ping, // Map ping values as y-axis
+            animationDuration: 0, // Disable animation
+            dataLabelSettings: const DataLabelSettings(isVisible: false),
+            enableTooltip: false,
+          );
+        }).toList(),
+        // .map((pingInfo, index) => LineSeries<double, int>(
+        //       dataSource: pingInfo,
+        //       xValueMapper: (_, index) => index, // Map index as x-axis
+        //       yValueMapper: (ping, _) => ping, // Map ping values as y-axis
+        //       animationDuration: 0, // Disable animation
+        //       dataLabelSettings: const DataLabelSettings(isVisible: false),
+        //       enableTooltip: false,
+        //     ))
+        // .toList(),
       ),
     );
   }
@@ -233,4 +291,13 @@ class UsageData {
   UsageData(this.category, this.usagePercentage);
   final String category;
   final num usagePercentage;
+}
+
+class PingDataHolder {
+  final double min;
+  final double max;
+  final double average;
+
+  final List<double> scaledValues;
+  PingDataHolder(this.scaledValues, this.min, this.max, this.average);
 }
