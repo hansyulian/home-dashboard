@@ -9,8 +9,13 @@ void main() async {
   MediaKit.ensureInitialized();
   await windowManager.ensureInitialized();
   runApp(
-    const MaterialApp(
-      home: DashboardScreen(),
+    MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+        canvasColor: Colors.black,
+      ),
+      home: const DashboardScreen(),
     ),
   );
 }
