@@ -7,21 +7,21 @@ String numberValueDisplay(
 }) {
   int minimumFractionDigit = minimumDecimal ?? 2;
   int targetTotalLength = targetLength ?? 5;
-  int integerValue = value.floor();
-  int integerLength = integerValue.toString().length;
 
-  int fractionDigits = minimumFractionDigit;
-  if (targetTotalLength - integerLength > minimumFractionDigit) {
-    fractionDigits = targetTotalLength - integerLength;
-  }
-  String formattedInteger = NumberFormat('#,###').format(integerValue);
-  double decimals = value - integerValue;
-  String decimalString = decimals.toStringAsFixed(fractionDigits);
+  // Determine how many digits are before the decimal point
+  String integerPart = value.truncate().toString();
+  int integerLength = integerPart.length;
 
-  String decimalSubString = '';
-  if (decimalString.length > 2) {
-    decimalSubString = '.${decimalString.substring(2)}';
-  }
+  int fractionDigits = (targetTotalLength - integerLength > minimumFractionDigit)
+      ? targetTotalLength - integerLength
+      : minimumFractionDigit;
 
-  return '$formattedInteger$decimalSubString';
+  // Format full number with both integer and fraction digits
+  NumberFormat formatter = NumberFormat.currency(
+    decimalDigits: fractionDigits,
+    symbol: '',
+    customPattern: '#,##0.${'0' * fractionDigits}',
+  );
+
+  return formatter.format(value).trim();
 }
