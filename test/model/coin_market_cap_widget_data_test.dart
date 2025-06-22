@@ -73,7 +73,8 @@ void main() {
     };
 
     // Parse the CoinMarketCapWidgetData from the JSON data
-    final widgetData = CoinMarketCapWidgetData.fromJsonResponse(jsonResponse);
+    final widgetData =
+        CoinMarketCapWidgetData.fromJsonResponse(jsonResponse, 100000);
 
     // Verify the parsed data
     expect(widgetData.id, 1);

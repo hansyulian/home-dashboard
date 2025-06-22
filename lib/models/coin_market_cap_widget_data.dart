@@ -1,4 +1,3 @@
-import 'package:home_dashboard/utils/safe_parse_double.dart';
 import 'package:home_dashboard/utils/safe_parse_int.dart';
 
 const btcCoinId = 1;

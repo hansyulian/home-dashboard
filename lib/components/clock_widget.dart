@@ -70,7 +70,7 @@ class ClockWidgetState extends State<ClockWidget> {
             crossAxisAlignment:
                 CrossAxisAlignment.center, // Center horizontally
             children: [
-          ClockText('$dayOfWeek', smallTextSize),
+          ClockText(dayOfWeek, smallTextSize),
           ClockText('$day/$month', smallTextSize),
           const SizedBox(height: 20),
           ClockText(hour, bigTextSize),

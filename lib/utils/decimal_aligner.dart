@@ -7,5 +7,5 @@ String decimalAligner(double value, {int? left, int? right}) {
   if (decimal == 0) {
     return alignedInteger;
   }
-  return '${alignedInteger}.${decimal}';
+  return '$alignedInteger.$decimal';
 }

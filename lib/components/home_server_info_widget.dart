@@ -27,7 +27,7 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
   late HomeServerInfo _info;
   double maxScale = 0.0;
 
-  HomeServerInfoWidgetState() {}
+  HomeServerInfoWidgetState();
 
   @override
   void initState() {
@@ -101,7 +101,7 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
               minimum: 0,
               maximum: 1,
               interval: 0.1,
-              labelStyle: const TextStyle(color: Colors.transparent),
+              labelStyle: TextStyle(color: Colors.transparent),
             ),
             series: [
               BarSeries<UsageData, String>(

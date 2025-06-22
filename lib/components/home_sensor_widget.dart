@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:home_dashboard/models/home_sensor.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
 import 'package:home_dashboard/modules/home_sensor_driver.dart';
 import 'package:home_dashboard/utils/value_ratio.dart';
@@ -22,7 +21,7 @@ class HomeSensorWidgetState extends State<HomeSensorWidget> {
   late HomeSensorDriver _homeSensorDriver;
   HomeSensorResponse _sensors = HomeSensorResponse();
 
-  HomeSensorWidgetState() {}
+  HomeSensorWidgetState();
 
   @override
   void initState() {

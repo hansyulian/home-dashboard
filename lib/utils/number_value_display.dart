@@ -12,15 +12,17 @@ String numberValueDisplay(
   String integerPart = value.truncate().toString();
   int integerLength = integerPart.length;
 
-  int fractionDigits = (targetTotalLength - integerLength > minimumFractionDigit)
-      ? targetTotalLength - integerLength
-      : minimumFractionDigit;
+  int fractionDigits =
+      (targetTotalLength - integerLength > minimumFractionDigit)
+          ? targetTotalLength - integerLength
+          : minimumFractionDigit;
 
   // Format full number with both integer and fraction digits
+  String fractionString = fractionDigits > 0 ? '.${'0' * fractionDigits}' : '';
   NumberFormat formatter = NumberFormat.currency(
     decimalDigits: fractionDigits,
     symbol: '',
-    customPattern: '#,##0.${'0' * fractionDigits}',
+    customPattern: '#,##0${fractionString}',
   );
 
   return formatter.format(value).trim();
