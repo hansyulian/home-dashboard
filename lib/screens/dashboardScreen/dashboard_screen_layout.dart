@@ -5,11 +5,15 @@ import 'package:home_dashboard/screens/dashboardScreen/dashboard_screen_layout_r
 class DashboardScreenLayout extends StatelessWidget {
   final DashboardWidgetSettings settings;
   const DashboardScreenLayout(this.settings, {super.key});
+
   @override
   Widget build(BuildContext context) {
     var rows = settings.rows;
-    return Column(
-      children: rows.map((row) => DashboardScreenLayoutRow(row)).toList(),
+    return Container(
+      color: Colors.black, // Set background color here
+      child: Column(
+        children: rows.map((row) => DashboardScreenLayoutRow(row)).toList(),
+      ),
     );
   }
 }

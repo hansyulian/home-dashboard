@@ -22,7 +22,7 @@ String numberValueDisplay(
   NumberFormat formatter = NumberFormat.currency(
     decimalDigits: fractionDigits,
     symbol: '',
-    customPattern: '#,##0${fractionString}',
+    customPattern: '#,##0$fractionString',
   );
 
   return formatter.format(value).trim();
