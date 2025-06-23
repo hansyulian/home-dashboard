@@ -138,7 +138,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         child: Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.transparent,
+            color: Colors.black, // Set background color here
             child: const Center(
                 child: Text(
               'Click anywhere to enable',
@@ -153,7 +153,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         child: Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.transparent,
+            color: Colors.black, // Set background color here
             child: const Center(
                 child: Text(
               'Click anywhere to enable for 1 minute',
