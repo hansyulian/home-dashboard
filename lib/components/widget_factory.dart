@@ -4,6 +4,7 @@ import 'package:home_dashboard/components/clock_widget.dart';
 import 'package:home_dashboard/components/coin_tracker_widget.dart';
 import 'package:home_dashboard/components/home_sensor_widget.dart';
 import 'package:home_dashboard/components/home_server_info_widget.dart';
+import 'package:home_dashboard/components/home_server_sensor_socket.dart';
 import 'package:home_dashboard/components/weather_forecast_widget.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
 
@@ -45,6 +46,12 @@ class WidgetFactory extends StatelessWidget {
         HomeServerInfoWidgetSetting homeServerInfoWidgetSetting =
             spec as HomeServerInfoWidgetSetting;
         return HomeServerInfoWidget(homeServerInfoWidgetSetting);
+      case 'homeServerSensorSocket':
+        HomeServerSensorSocketWidgetSetting
+            homeServerSensorSocketWidgetSetting =
+            spec as HomeServerSensorSocketWidgetSetting;
+        return HomeServerSensorSocketWidget(
+            homeServerSensorSocketWidgetSetting);
       case 'blank':
         return blank();
     }

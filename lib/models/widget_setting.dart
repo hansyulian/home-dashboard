@@ -19,6 +19,8 @@ abstract class WidgetSetting {
         return HomeSensorWidgetSetting.fromJson(json);
       case 'homeServerInfo':
         return HomeServerInfoWidgetSetting.fromJson(json);
+      case 'homeServerSensorSocket':
+        return HomeServerSensorSocketWidgetSetting.fromJson(json);
       case 'blank':
         return BlankWidgetSetting.fromJson(json);
       default:
@@ -217,7 +219,8 @@ class HomeServerInfoWidgetSetting extends WidgetSetting {
   final String apiEndpoint;
   final int? _refreshInSecond;
 
-  HomeServerInfoWidgetSetting(this.apiEndpoint, {int? refreshInSecond})
+  HomeServerInfoWidgetSetting(this.apiEndpoint,
+      {int? refreshInSecond, String? type})
       : _refreshInSecond = refreshInSecond;
 
   @override
@@ -231,5 +234,24 @@ class HomeServerInfoWidgetSetting extends WidgetSetting {
   @override
   Map<String, dynamic> toJson() {
     return {'type': type, 'apiEndpoint': apiEndpoint};
+  }
+}
+
+class HomeServerSensorSocketWidgetSetting extends WidgetSetting {
+  final String socketEndpoint;
+
+  HomeServerSensorSocketWidgetSetting(this.socketEndpoint);
+
+  @override
+  String get type => 'homeServerSensorSocket';
+
+  factory HomeServerSensorSocketWidgetSetting.fromJson(
+      Map<String, dynamic> json) {
+    return HomeServerSensorSocketWidgetSetting(json['socketEndpoint']);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': type, 'socketEndpoint': socketEndpoint};
   }
 }
