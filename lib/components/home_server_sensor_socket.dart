@@ -37,16 +37,23 @@ class HomeServerSensorSocketWidgetState
   // The WebSocket channel for communication with the server. Made nullable for safe initialization.
   IOWebSocketChannel? _channel;
   final List<List<HomeServerPingInfo>> _pingHistories = [];
+  bool _isTimerRunning = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _isTimerRunning = false;
+    });
     // Establish the WebSocket connection when the widget is initialized.
     _connectSocket();
   }
 
   @override
   void dispose() {
+    setState(() {
+      _isTimerRunning = false;
+    });
     // Cancel any active reconnection timer to prevent memory leaks.
     _reconnectTimer?.cancel();
     // Close the WebSocket connection gracefully.

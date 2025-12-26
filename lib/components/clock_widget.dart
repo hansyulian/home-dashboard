@@ -16,15 +16,22 @@ class ClockWidget extends StatefulWidget {
 class ClockWidgetState extends State<ClockWidget> {
   late Timer _timer;
   DateTime now = DateTime.now();
+  bool _isTimerRunning = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _isTimerRunning = false;
+    });
     _startTimer();
   }
 
   void _startTimer() {
     // Calculate milliseconds to the next full second
+    setState(() {
+      _isTimerRunning = true;
+    });
     final int millisecondsToNextSecond = 1000 - DateTime.now().millisecond;
     _timer = Timer(Duration(milliseconds: millisecondsToNextSecond), () {
       // Update the state for the initial second
@@ -39,6 +46,9 @@ class ClockWidgetState extends State<ClockWidget> {
 
   void _startPeriodicTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!_isTimerRunning) {
+        return;
+      }
       setState(() {
         now = DateTime.now();
       });
@@ -47,6 +57,9 @@ class ClockWidgetState extends State<ClockWidget> {
 
   @override
   void dispose() {
+    setState(() {
+      _isTimerRunning = false;
+    });
     super.dispose();
     _timer.cancel();
   }

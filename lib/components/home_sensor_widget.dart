@@ -20,6 +20,7 @@ class HomeSensorWidgetState extends State<HomeSensorWidget> {
   late Timer _timer;
   late HomeSensorDriver _homeSensorDriver;
   HomeSensorResponse _sensors = HomeSensorResponse();
+  bool _isTimerRunning = false;
 
   HomeSensorWidgetState();
 
@@ -28,6 +29,9 @@ class HomeSensorWidgetState extends State<HomeSensorWidget> {
     // TODO: implement initState
     super.initState();
     _homeSensorDriver = HomeSensorDriver(widget.setting.apiEndpoint);
+    setState(() {
+      _isTimerRunning = false;
+    });
     _startFetcher();
   }
 
@@ -39,8 +43,14 @@ class HomeSensorWidgetState extends State<HomeSensorWidget> {
 
   void _startFetcher() {
     _fetchSensorData();
+    setState(() {
+      _isTimerRunning = true;
+    });
     _timer = Timer.periodic(Duration(seconds: widget.setting.refreshInSecond),
         (timer) async {
+      if (!_isTimerRunning) {
+        return;
+      }
       _fetchSensorData();
     });
   }

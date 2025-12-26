@@ -18,6 +18,7 @@ class WeatherForecastWidgetState extends State<WeatherForecastWidget> {
   late Timer _timer;
   late TomorrowIODriver _driver;
   List<WeatherForecast> _data = [];
+  bool _isTimerRunning = false;
 
   @override
   void initState() {
@@ -25,13 +26,22 @@ class WeatherForecastWidgetState extends State<WeatherForecastWidget> {
     _driver = TomorrowIODriver(
         widget.setting.apiKey, widget.setting.lat, widget.setting.lon,
         mock: widget.setting.mock);
+    setState(() {
+      _isTimerRunning = false;
+    });
     _startFetcher();
   }
 
   void _startFetcher() {
+    setState(() {
+      _isTimerRunning = true;
+    });
     _updateState();
     _timer = Timer.periodic(Duration(seconds: widget.setting.refreshInSecond),
         (timer) async {
+      if (!_isTimerRunning) {
+        return;
+      }
       _updateState();
     });
   }
@@ -45,6 +55,9 @@ class WeatherForecastWidgetState extends State<WeatherForecastWidget> {
 
   @override
   void dispose() {
+    setState(() {
+      _isTimerRunning = false;
+    });
     super.dispose();
     _timer.cancel();
   }

@@ -22,18 +22,28 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
   late Timer _timer;
   late CoinTrackerDriver _coinTrackerDriver;
   List<CoinTrackerData> _coinTrackerData = [];
+  bool _isTimerRunning = false;
 
   @override
   void initState() {
     super.initState();
     _coinTrackerDriver = CoinTrackerDriver(widget.setting);
+    setState(() {
+      _isTimerRunning = false;
+    });
     _startFetcher();
   }
 
   void _startFetcher() {
     _fetchCoinData();
+    setState(() {
+      _isTimerRunning = true;
+    });
     _timer = Timer.periodic(Duration(seconds: widget.setting.refreshInSecond),
         (timer) async {
+      if (!_isTimerRunning) {
+        return;
+      }
       _fetchCoinData();
     });
   }
@@ -47,6 +57,9 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
 
   @override
   void dispose() {
+    setState(() {
+      _isTimerRunning = false;
+    });
     super.dispose();
     _timer.cancel();
   }

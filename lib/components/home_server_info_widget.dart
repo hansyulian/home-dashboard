@@ -26,6 +26,7 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
   late HomeServerInfoDriver _homeServerInfoDriver;
   late HomeServerInfo _info;
   double maxScale = 0.0;
+  bool _isTimerRunning = false;
 
   HomeServerInfoWidgetState();
 
@@ -43,6 +44,9 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
       [],
       // HomeServerZpoolInfo('', '', '', '', '', [])
     );
+    setState(() {
+      _isTimerRunning = false;
+    });
     _fetchData();
     _startFetcher();
   }
@@ -50,12 +54,21 @@ class HomeServerInfoWidgetState extends State<HomeServerInfoWidget> {
   @override
   void dispose() {
     super.dispose();
+    setState(() {
+      _isTimerRunning = false;
+    });
     _timer.cancel();
   }
 
   void _startFetcher() {
+    setState(() {
+      _isTimerRunning = true;
+    });
     _timer = Timer.periodic(Duration(seconds: widget.setting.refreshInSecond),
         (timer) async {
+      if (!_isTimerRunning) {
+        return;
+      }
       _fetchData();
     });
   }
