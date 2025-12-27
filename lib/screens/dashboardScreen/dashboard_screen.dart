@@ -47,6 +47,7 @@ class DashboardScreenState extends State<DashboardScreen> {
     var dashboardConfig = await DashboardConfigManager.dashboardWidgetSettings;
     debugJson(dashboardConfig.toJson());
     setState(() {
+      _isTimerRunning = true;
       dashboardWidgetSettings = dashboardConfig;
     });
     bool isStartFullScreen = dashboardConfig.startFullscreen ?? false;
