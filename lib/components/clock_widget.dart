@@ -24,21 +24,27 @@ class ClockWidgetState extends State<ClockWidget> {
     setState(() {
       _isTimerRunning = false;
     });
-    _startTimer();
+    _scheduleClock();
   }
 
-  void _startTimer() {
+  void _updateTime() {
+    if (mounted) {
+      setState(() {
+        now = DateTime.now();
+      });
+    }
+  }
+
+  void _scheduleClock() {
     // Calculate milliseconds to the next full second
     setState(() {
       _isTimerRunning = true;
     });
-    final int millisecondsToNextSecond = 1000 - DateTime.now().millisecond;
+    final int millisecondsToNextSecond =
+        1000 - DateTime.now().millisecond + 100;
     _timer = Timer(Duration(milliseconds: millisecondsToNextSecond), () {
       // Update the state for the initial second
-      setState(() {
-        now = DateTime.now();
-      });
-
+      _updateTime();
       // Start the periodic timer
       _startPeriodicTimer();
     });
@@ -49,19 +55,14 @@ class ClockWidgetState extends State<ClockWidget> {
       if (!_isTimerRunning) {
         return;
       }
-      setState(() {
-        now = DateTime.now();
-      });
+      _updateTime();
     });
   }
 
   @override
   void dispose() {
-    setState(() {
-      _isTimerRunning = false;
-    });
+    _timer?.cancel(); // Cancel handles both the one-shot and periodic
     super.dispose();
-    _timer.cancel();
   }
 
   @override
