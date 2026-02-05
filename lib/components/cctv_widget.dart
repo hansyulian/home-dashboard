@@ -17,12 +17,16 @@ class CctvWidgetState extends State<CctvWidget> {
   late final player = Player();
   late final controller = VideoController(player,
       configuration: const VideoControllerConfiguration(
-          enableHardwareAcceleration: false));
+        vo: 'gpu',
+        hwdec: 'drm',
+        enableHardwareAcceleration: false,
+      ));
 
   @override
   void initState() {
     super.initState();
     // Access the streamUrl from the widget's settings
+    // OR try specifically for Allwinner:
     player.open(Media(widget.setting.streamUrl));
     player.setAudioTrack(AudioTrack.no());
     player.setSubtitleTrack(SubtitleTrack.no());
