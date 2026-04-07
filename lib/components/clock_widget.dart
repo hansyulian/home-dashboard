@@ -16,14 +16,10 @@ class ClockWidget extends StatefulWidget {
 class ClockWidgetState extends State<ClockWidget> {
   late Timer _timer;
   DateTime now = DateTime.now();
-  bool _isTimerRunning = false;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _isTimerRunning = false;
-    });
     _scheduleClock();
   }
 
@@ -36,61 +32,52 @@ class ClockWidgetState extends State<ClockWidget> {
   }
 
   void _scheduleClock() {
-    // Calculate milliseconds to the next full second
-    setState(() {
-      _isTimerRunning = true;
-    });
     final int millisecondsToNextSecond =
         1000 - DateTime.now().millisecond + 100;
     _timer = Timer(Duration(milliseconds: millisecondsToNextSecond), () {
-      // Update the state for the initial second
       _updateTime();
-      // Start the periodic timer
       _startPeriodicTimer();
     });
   }
 
   void _startPeriodicTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!_isTimerRunning) {
-        return;
-      }
-      _updateTime();
-    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
   }
 
   @override
   void dispose() {
-    _timer?.cancel(); // Cancel handles both the one-shot and periodic
+    _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double baseSize = 100;
-    double widgetSettingSize = widget.setting.size ?? 1.0;
-    double bigTextSize = widgetSettingSize * baseSize;
-    double smallTextSize = widgetSettingSize * baseSize * 0.25;
-    String dayOfWeek = getDayOfWeek(now.weekday);
-    String month = getMonth(now.month);
-    String day = pad(now.day, 2, '0');
-    String hour = pad(now.hour, 2, '0');
-    String minute = pad(now.minute, 2, '0');
-    String second = pad(now.second, 2, '0');
+    final double baseSize = 100;
+    final double widgetSettingSize = widget.setting.size ?? 1.0;
+    final double bigTextSize = widgetSettingSize * baseSize;
+    final double smallTextSize = widgetSettingSize * baseSize * 0.25;
+
+    final String dayOfWeek = getDayOfWeek(now.weekday);
+    final String month = getMonth(now.month);
+    final String day = pad(now.day, 2, '0');
+    final String hour = pad(now.hour, 2, '0');
+    final String minute = pad(now.minute, 2, '0');
+    final String second = pad(now.second, 2, '0');
 
     return Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Center vertically
-            crossAxisAlignment:
-                CrossAxisAlignment.center, // Center horizontally
-            children: [
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
           ClockText(dayOfWeek, smallTextSize),
           ClockText('$day/$month', smallTextSize),
           const SizedBox(height: 20),
           ClockText(hour, bigTextSize),
           ClockText(minute, bigTextSize),
           ClockText(second, smallTextSize),
-        ]));
+        ],
+      ),
+    );
   }
 }
 
@@ -104,8 +91,8 @@ class ClockText extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        color: const Color(0xFFFFFFFF), // Set the text color here
-        fontSize: size, // You can also set other text styles like font size
+        color: const Color(0xFFFFFFFF),
+        fontSize: size,
         height: 1.0,
         decoration: TextDecoration.none,
       ),

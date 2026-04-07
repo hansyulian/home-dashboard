@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:home_dashboard/screens/dashboardScreen/dashboard_screen.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart'; // Provides [Player], [Media], [Playlist] etc.
+import 'package:flutter/rendering.dart';
 
 void main() async {
+  debugRepaintRainbowEnabled = true;
+  debugPrintRebuildDirtyWidgets = true;
   WidgetsFlutterBinding.ensureInitialized();
   // Necessary initialization for package:media_kit.
   MediaKit.ensureInitialized();

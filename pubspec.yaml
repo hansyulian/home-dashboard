@@ -39,16 +39,15 @@ dependencies:
   media_kit_libs_video: ^1.0.7
   path_provider: ^2.1.4
   http: ^1.6.0
-  intl: ^0.20.2
   window_manager: ^0.5.1
   syncfusion_flutter_charts: ^32.1.20
   web_socket_channel: ^3.0.3
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.25.15
-  mockito: ^5.4.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
