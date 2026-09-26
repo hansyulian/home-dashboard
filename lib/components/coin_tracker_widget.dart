@@ -79,7 +79,7 @@ class CoinTrackerState extends State<CoinTrackerWidget> {
     return scaledSize * headerScale;
   }
 
-  renderTableHeader() {
+  TableRow renderTableHeader() {
     return TableRow(children: [
       CoinTableHeader(text: 'Coin', size: headerSize),
       CoinTableHeader(text: 'USD', size: headerSize),

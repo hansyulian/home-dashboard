@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:home_dashboard/utils/safe_parse_double.dart';
 import 'package:home_dashboard/utils/safe_parse_int.dart';
+import 'package:intl/intl.dart';
 
 class HomeServerSensor {
   final HomeServerSystemInfo system;
   final List<HomeServerHddInfo> hdds;
   final List<HomeServerPingInfo> pings;
+  final List<HomeServerNetworkIssueInfo> networkIssues;
 
   HomeServerSensor({
     required this.system,
     required this.hdds,
     required this.pings,
+    required this.networkIssues,
   });
 
   factory HomeServerSensor.fromJson(Map<String, dynamic> json) {
@@ -27,7 +30,13 @@ class HomeServerSensor {
         .map((pingJson) => HomeServerPingInfo.fromJson(pingJson))
         .toList();
 
-    return HomeServerSensor(system: system, hdds: hdds, pings: pings);
+    var networkIssuesJson = (json['networkIssues'] ?? []) as List<dynamic>;
+    List<HomeServerNetworkIssueInfo> networkIssues = networkIssuesJson
+        .map((networkIssueJson) =>
+            HomeServerNetworkIssueInfo.fromJson(networkIssueJson))
+        .toList();
+    return HomeServerSensor(
+        system: system, hdds: hdds, pings: pings, networkIssues: networkIssues);
   }
 
   Map<String, dynamic> toJson() {
@@ -71,6 +80,48 @@ class HomeServerHddInfo {
       'name': name,
       'status': status,
     };
+  }
+}
+
+class HomeServerNetworkIssueInfo {
+  final String target;
+  final DateTime startTime;
+  final DateTime? endTime;
+
+  HomeServerNetworkIssueInfo({
+    required this.target,
+    required this.startTime,
+    this.endTime,
+  });
+
+  factory HomeServerNetworkIssueInfo.fromJson(Map<String, dynamic> json) {
+    DateTime startTime = DateTime.fromMillisecondsSinceEpoch(
+        safeParseInt(json['startTime']) ?? 0);
+    int endTimeValue = safeParseInt(json['endTime']) ?? 0;
+    return HomeServerNetworkIssueInfo(
+      target: json['target'],
+      startTime: startTime,
+      endTime: endTimeValue > 0
+          ? DateTime.fromMillisecondsSinceEpoch(endTimeValue)
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'target': target,
+      'startTime': startTime.millisecondsSinceEpoch,
+      'endTime': endTime?.millisecondsSinceEpoch ?? 0,
+    };
+  }
+
+  String get displayText {
+    final formattedStart = DateFormat('dd-MM HH:mm').format(startTime);
+    if (endTime != null) {
+      final differenceInS = endTime!.difference(startTime).inSeconds;
+      return '$formattedStart (${differenceInS}s)';
+    }
+    return formattedStart;
   }
 }
 

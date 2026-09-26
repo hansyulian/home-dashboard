@@ -21,10 +21,10 @@ class Grid<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      double itemWidth = (constraints.maxWidth - 10) / this.columns; // Half
+      double itemWidth = (constraints.maxWidth - 10) / columns; // Half
       return Wrap(
-          spacing: this.horizontalGap,
-          runSpacing: this.verticalGap,
+          spacing: horizontalGap,
+          runSpacing: verticalGap,
           children: List.generate(data.length, (index) {
             var item = data[index];
             return SizedBox(

@@ -9,6 +9,7 @@ import 'package:home_dashboard/models/home_server_sensor.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
 import 'package:home_dashboard/utils/decimal_aligner.dart';
 import 'package:home_dashboard/utils/log_scaler.dart';
+import 'package:home_dashboard/utils/string_to_hex_color.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:web_socket_channel/io.dart'; // Specifically for non-web platforms (desktop, mobile)
 
@@ -16,6 +17,8 @@ import 'package:web_socket_channel/io.dart'; // Specifically for non-web platfor
 // This value can be adjusted based on your expected network capabilities.
 const double maxNetworkSpeed = 12 * 1024 * 1024; // 12 MB/s in bytes
 const int pingHistoryLength = 100;
+const int networkIssueGridColumns = 3;
+const int networkIssueGridRows = 3;
 
 class HomeServerSensorSocketWidget extends StatefulWidget {
   final HomeServerSensorSocketWidgetSetting setting;
@@ -171,7 +174,7 @@ class HomeServerSensorSocketWidgetState
   /// Renders the system usage (CPU, Memory, Network) as a bar chart.
   Widget _renderSystem() {
     // Ensure _sensorInfo and its properties are not null before accessing.
-    if (_sensorInfo == null || _sensorInfo!.system == null) {
+    if (_sensorInfo == null) {
       return const SizedBox.shrink(); // Return an empty widget if no data
     }
     final system = _sensorInfo!.system;
@@ -179,17 +182,17 @@ class HomeServerSensorSocketWidgetState
     // Calculate network rates, applying a square root for non-linear scaling.
     // Ensure null safety for network properties.
     final num uploadRate =
-        pow(1.0 * (system.network?.upload ?? 0) / maxNetworkSpeed, 0.5);
+        pow(1.0 * (system.network.upload ?? 0) / maxNetworkSpeed, 0.5);
     final num downloadRate =
-        pow(1.0 * (system.network?.download ?? 0) / maxNetworkSpeed, 0.5);
+        pow(1.0 * (system.network.download ?? 0) / maxNetworkSpeed, 0.5);
 
     // Prepare data for the bar chart.
     final List<UsageData> usageData = [
       UsageData('CPU',
-          logScaler(system.cpu?.total ?? 0)), // Ensure cpu.total is null-safe
+          logScaler(system.cpu.total ?? 0)), // Ensure cpu.total is null-safe
       UsageData(
           'Memory',
-          (system.memory?.usageRatio ??
+          (system.memory.usageRatio ??
               0)), // Ensure memory.usageRatio is null-safe
       UsageData('Upload', uploadRate),
       UsageData('Download', downloadRate),
@@ -224,7 +227,7 @@ class HomeServerSensorSocketWidgetState
   /// Renders the HDD status as a grid of cards.
   Widget _renderHdds() {
     // Ensure _sensorInfo and its properties are not null.
-    if (_sensorInfo == null || _sensorInfo!.hdds == null) {
+    if (_sensorInfo == null) {
       return const SizedBox.shrink();
     }
 
@@ -273,9 +276,7 @@ class HomeServerSensorSocketWidgetState
   /// Renders ping status and a graph of ping history.
   Widget _renderPings() {
     // Ensure _sensorInfo and its properties are not null.
-    if (_sensorInfo == null ||
-        _sensorInfo!.pings == null ||
-        _sensorInfo!.pings.isEmpty) {
+    if (_sensorInfo == null || _sensorInfo!.pings.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -301,6 +302,8 @@ class HomeServerSensorSocketWidgetState
       children.add(Space());
     }
     children.add(_renderPingGraph());
+    children.add(Space());
+    children.add(_renderNetworkIssuesReport());
     return Column(
       children: children,
     );
@@ -350,11 +353,51 @@ class HomeServerSensorSocketWidgetState
     return pingDataHolders;
   }
 
+  Widget _renderNetworkIssuesReport() {
+    if (_sensorInfo == null || _sensorInfo!.networkIssues.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    List<HomeServerNetworkIssueInfo> renderedNetworkIssues =
+        _sensorInfo!.networkIssues.reversed.toList().sublist(
+            0,
+            min(networkIssueGridColumns * networkIssueGridRows,
+                _sensorInfo!.networkIssues.length));
+    List<Widget> children = [];
+
+    for (int i = 0; i < networkIssueGridColumns; i++) {
+      int start = min(i * networkIssueGridRows, renderedNetworkIssues.length);
+      int end =
+          min((i + 1) * networkIssueGridRows, renderedNetworkIssues.length);
+      List<HomeServerNetworkIssueInfo> rowItems =
+          renderedNetworkIssues.sublist(start, end);
+
+      // Wrap the Column in Expanded so it divides the Row's width cleanly
+      children.add(Expanded(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.stretch, // Make containers fill column width
+          children: rowItems.map((rowItem) {
+            // Removed Expanded here. Containers will now size based on their padding/content.
+            return Container(
+              color: stringToColor(rowItem.target),
+              padding: const EdgeInsets.all(4),
+              margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+              child: _renderText(rowItem.displayText),
+            );
+          }).toList(),
+        ),
+      ));
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
+    );
+  }
+
   /// Renders a line graph of ping history for multiple targets.
   Widget _renderPingGraph() {
-    if (_sensorInfo == null ||
-        _sensorInfo!.pings == null ||
-        _sensorInfo!.pings.isEmpty) {
+    if (_sensorInfo == null || _sensorInfo!.pings.isEmpty) {
       return const SizedBox.shrink();
     }
 
