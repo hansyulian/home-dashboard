@@ -18,7 +18,7 @@ import 'package:web_socket_channel/io.dart'; // Specifically for non-web platfor
 const double maxNetworkSpeed = 12 * 1024 * 1024; // 12 MB/s in bytes
 const int pingHistoryLength = 100;
 const int networkIssueGridColumns = 3;
-const int networkIssueGridRows = 3;
+const int networkIssueGridRows = 5;
 
 class HomeServerSensorSocketWidget extends StatefulWidget {
   final HomeServerSensorSocketWidgetSetting setting;
@@ -292,7 +292,14 @@ class HomeServerSensorSocketWidgetState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _renderText(record.target ?? 'Unknown'), // Null check for target
+            Row(
+              spacing: 8,
+              children: [
+                Container(
+                    width: 8, height: 8, color: stringToColor(record.target)),
+                _renderText(record.target), // Null check for target
+              ],
+            ),
             _renderText(
               '${decimalAligner(record.lastValue ?? 0, left: 3, right: 3)} ms',
             ),
