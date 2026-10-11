@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Flutter: home_dashboard (linux)",
+    "adapter": "Dart",
+    "request": "launch",
+    "type": "flutter",
+    "program": "lib/main.dart",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "args": ["-d", "linux"],
+    "toolArgs": ["-d", "linux"]
+  },
+  {
+    "label": "Flutter: home_dashboard (linux, profile)",
+    "adapter": "Dart",
+    "request": "launch",
+    "type": "flutter",
+    "program": "lib/main.dart",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "args": ["--profile", "-d", "linux"],
+    "toolArgs": ["--profile", "-d", "linux"]
+  }
+]
