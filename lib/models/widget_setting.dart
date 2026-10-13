@@ -51,19 +51,20 @@ class BlankWidgetSetting extends WidgetSetting {
 // Concrete class for CctvWidget
 class CctvWidgetSetting extends WidgetSetting {
   final String streamUrl;
+  final int? maxFps;
 
-  CctvWidgetSetting(this.streamUrl);
+  CctvWidgetSetting(this.streamUrl, {this.maxFps});
 
   @override
   String get type => 'cctv';
 
   factory CctvWidgetSetting.fromJson(Map<String, dynamic> json) {
-    return CctvWidgetSetting(json['streamUrl']);
+    return CctvWidgetSetting(json['streamUrl'], maxFps: json['maxFps']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'type': type, 'streamUrl': streamUrl};
+    return {'type': type, 'streamUrl': streamUrl, 'maxFps': maxFps};
   }
 }
 

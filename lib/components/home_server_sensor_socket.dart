@@ -9,6 +9,7 @@ import 'package:home_dashboard/models/home_server_sensor.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
 import 'package:home_dashboard/utils/decimal_aligner.dart';
 import 'package:home_dashboard/utils/log_scaler.dart';
+import 'package:home_dashboard/utils/print_debug.dart';
 import 'package:home_dashboard/utils/string_to_hex_color.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:web_socket_channel/io.dart'; // Specifically for non-web platforms (desktop, mobile)
@@ -17,6 +18,7 @@ import 'package:web_socket_channel/io.dart'; // Specifically for non-web platfor
 // This value can be adjusted based on your expected network capabilities.
 const double maxNetworkSpeed = 12 * 1024 * 1024; // 12 MB/s in bytes
 const int pingHistoryLength = 100;
+const Duration minRebuildInterval = Duration(seconds: 2);
 const int networkIssueGridColumns = 3;
 const int networkIssueGridRows = 5;
 
@@ -40,23 +42,19 @@ class HomeServerSensorSocketWidgetState
   // The WebSocket channel for communication with the server. Made nullable for safe initialization.
   IOWebSocketChannel? _channel;
   final List<List<HomeServerPingInfo>> _pingHistories = [];
-  bool _isTimerRunning = false;
+  Timer? _rebuildTimer;
+  DateTime _lastRebuild = DateTime.fromMillisecondsSinceEpoch(0);
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _isTimerRunning = false;
-    });
     // Establish the WebSocket connection when the widget is initialized.
     _connectSocket();
   }
 
   @override
   void dispose() {
-    setState(() {
-      _isTimerRunning = false;
-    });
+    _rebuildTimer?.cancel();
     // Cancel any active reconnection timer to prevent memory leaks.
     _reconnectTimer?.cancel();
     // Close the WebSocket connection gracefully.
@@ -84,22 +82,20 @@ class HomeServerSensorSocketWidgetState
 
       _channel!.stream.listen(
         (message) {
-          // Update UI with new data.
-          // setState is crucial to trigger a rebuild of the widget with new data.
-          setState(() {
-            try {
-              final jsonMessage = json.decode(message);
-              _sensorInfo = HomeServerSensor.fromJson(jsonMessage);
-              _pingHistories.insert(0, _sensorInfo!.pings);
-              if (_pingHistories.length > pingHistoryLength) {
-                _pingHistories.removeRange(
-                    pingHistoryLength, _pingHistories.length);
-              }
-            } catch (e) {
-              print('Error parsing WebSocket message: $e, Message: $message');
-              // Optionally, display an error message to the user or log it.
+          // Decode outside setState and coalesce rebuilds: charts are costly
+          // to rebuild/rasterize on low-end hardware.
+          try {
+            final jsonMessage = json.decode(message);
+            _sensorInfo = HomeServerSensor.fromJson(jsonMessage);
+            _pingHistories.insert(0, _sensorInfo!.pings);
+            if (_pingHistories.length > pingHistoryLength) {
+              _pingHistories.removeRange(
+                  pingHistoryLength, _pingHistories.length);
             }
-          });
+            _scheduleRebuild();
+          } catch (e) {
+            printDebug('Error parsing WebSocket message: $e');
+          }
           _isConnecting = false; // Connection successful, reset flag.
           _reconnectTimer?.cancel(); // Cancel any pending reconnect timers.
         },
@@ -119,6 +115,19 @@ class HomeServerSensorSocketWidgetState
       _isConnecting = false;
       _scheduleReconnect(); // Schedule a reconnection attempt if initial connection fails.
     }
+  }
+
+  void _scheduleRebuild() {
+    if (_rebuildTimer != null) return;
+    final sinceLast = DateTime.now().difference(_lastRebuild);
+    final wait = sinceLast >= minRebuildInterval
+        ? Duration.zero
+        : minRebuildInterval - sinceLast;
+    _rebuildTimer = Timer(wait, () {
+      _rebuildTimer = null;
+      _lastRebuild = DateTime.now();
+      if (mounted) setState(() {});
+    });
   }
 
   /// Schedules a reconnection attempt after a delay.
@@ -141,8 +150,6 @@ class HomeServerSensorSocketWidgetState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: Colors.blue), // Customizable color
-            SizedBox(height: 16), // Use SizedBox for consistent spacing
             Text(
               'Connecting to server...',
               style: TextStyle(

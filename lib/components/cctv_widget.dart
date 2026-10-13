@@ -25,7 +25,8 @@ class CctvWidgetState extends State<CctvWidget> {
   Future<void> _applyLowLatency() async {
     final platform = player.platform;
     if (platform is! NativePlayer) return;
-    const props = {
+    final maxFps = widget.setting.maxFps ?? 5;
+    final props = {
       // H618 VPU (Cedrus) is a stateless V4L2 decoder; the -copy variants
       // work without dmabuf/GL interop. Falls back to software if unsupported.
       'hwdec': 'v4l2request-copy,v4l2m2m-copy,auto-copy',
@@ -41,6 +42,13 @@ class CctvWidgetState extends State<CctvWidget> {
       'video-sync': 'desync',
       'framedrop': 'vo',
       'audio': 'no',
+      // CPU savers for weak SoCs: cheaper decode, fewer frames to convert/upload.
+      'vd-lavc-fast': 'yes',
+      'vd-lavc-skiploopfilter': 'all',
+      'vd-lavc-threads': '2',
+      'vf': 'fps=$maxFps',
+      'sws-fast': 'yes',
+      'scale': 'bilinear',
     };
     for (final e in props.entries) {
       await platform.setProperty(e.key, e.value);
