@@ -31,17 +31,14 @@ class ClockWidgetState extends State<ClockWidget> {
     }
   }
 
+  // Re-align to the wall clock after every tick so drift or delayed timers
+  // can never accumulate into a skipped second.
   void _scheduleClock() {
-    final int millisecondsToNextSecond =
-        1000 - DateTime.now().millisecond + 100;
+    final int millisecondsToNextSecond = 1000 - DateTime.now().millisecond + 20;
     _timer = Timer(Duration(milliseconds: millisecondsToNextSecond), () {
       _updateTime();
-      _startPeriodicTimer();
+      _scheduleClock();
     });
-  }
-
-  void _startPeriodicTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
   }
 
   @override

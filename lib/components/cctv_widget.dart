@@ -18,7 +18,7 @@ class CctvWidgetState extends State<CctvWidget> {
       configuration: const PlayerConfiguration(bufferSize: 512 * 1024));
   late final controller = VideoController(player,
       configuration: const VideoControllerConfiguration(
-          enableHardwareAcceleration: false));
+          enableHardwareAcceleration: true));
 
   // Minimise live-stream latency: skip long probing, drop caching, and
   // render frames as they arrive instead of syncing to the audio clock.
@@ -26,6 +26,9 @@ class CctvWidgetState extends State<CctvWidget> {
     final platform = player.platform;
     if (platform is! NativePlayer) return;
     const props = {
+      // H618 VPU (Cedrus) is a stateless V4L2 decoder; the -copy variants
+      // work without dmabuf/GL interop. Falls back to software if unsupported.
+      'hwdec': 'v4l2request-copy,v4l2m2m-copy,auto-copy',
       'profile': 'low-latency',
       'cache': 'no',
       'cache-pause': 'no',
