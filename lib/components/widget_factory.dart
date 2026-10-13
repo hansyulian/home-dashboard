@@ -21,8 +21,15 @@ class WidgetFactory extends StatelessWidget {
     return Container();
   }
 
+  // Each widget gets its own repaint boundary so a clock tick or a chart update
+  // does not force the whole screen to be re-rasterized (expensive on software
+  // rendering / low-end GPUs).
   @override
   Widget build(BuildContext context) {
+    return RepaintBoundary(child: _buildContent());
+  }
+
+  Widget _buildContent() {
     switch (spec.type) {
       case 'cctv':
         CctvWidgetSetting cctvWidget = spec as CctvWidgetSetting;
