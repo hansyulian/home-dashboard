@@ -65,7 +65,8 @@ class TomorrowIODriver {
         int weatherCode = values['weatherCode'];
         WeatherType type =
             '$weatherCode'[0] == '4' ? WeatherType.rainy : WeatherType.clear;
-        result.add(WeatherForecast(type, time, rainIntensity, temperature));
+        result.add(WeatherForecast(
+            type, time, rainIntensity, temperature, rainIntensity > 0 ? 1 : 0));
       }
       return result;
     }
@@ -84,8 +85,8 @@ class TomorrowIODriver {
       var dateTime = DateTime(now.year, now.month, day, hour % 24, 0, 0);
       double rainIntensity =
           weatherType == WeatherType.rainy ? 10 - (i * 0.1) : 0;
-      result.add(WeatherForecast(
-          weatherType, dateTime.toString(), rainIntensity, temperature));
+      result.add(WeatherForecast(weatherType, dateTime.toString(),
+          rainIntensity, temperature, rainIntensity > 0 ? 1 : 0));
     }
     return result;
   }

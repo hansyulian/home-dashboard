@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:home_dashboard/components/weather_forecast_widget_renderer/weather_forecast_widget_renderer_factory.dart';
 import 'package:home_dashboard/models/weather_forecast.dart';
 import 'package:home_dashboard/models/widget_setting.dart';
-import 'package:home_dashboard/modules/tomorrow_io_driver.dart';
+import 'package:home_dashboard/modules/open_meteo_driver.dart';
 
 class WeatherForecastWidget extends StatefulWidget {
   final WeatherForecastWidgetSetting setting;
@@ -16,16 +16,19 @@ class WeatherForecastWidget extends StatefulWidget {
 
 class WeatherForecastWidgetState extends State<WeatherForecastWidget> {
   late Timer _timer;
-  late TomorrowIODriver _driver;
+  late OpenMeteoDriver _driver;
   List<WeatherForecast> _data = [];
   bool _isTimerRunning = false;
 
   @override
   void initState() {
     super.initState();
-    _driver = TomorrowIODriver(
-        widget.setting.apiKey, widget.setting.lat, widget.setting.lon,
-        mock: widget.setting.mock);
+    // Open-Meteo does not require an API key, so we pass lat, lon, and mock
+    _driver = OpenMeteoDriver(
+      widget.setting.lat,
+      widget.setting.lon,
+      mock: widget.setting.mock,
+    );
     setState(() {
       _isTimerRunning = false;
     });
@@ -48,9 +51,11 @@ class WeatherForecastWidgetState extends State<WeatherForecastWidget> {
 
   void _updateState() async {
     var responseData = await _driver.safeFetch();
-    setState(() {
-      _data = responseData;
-    });
+    if (mounted) {
+      setState(() {
+        _data = responseData;
+      });
+    }
   }
 
   @override
@@ -58,8 +63,8 @@ class WeatherForecastWidgetState extends State<WeatherForecastWidget> {
     setState(() {
       _isTimerRunning = false;
     });
-    super.dispose();
     _timer.cancel();
+    super.dispose();
   }
 
   @override

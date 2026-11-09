@@ -13,16 +13,13 @@ class WeatherForecast {
   final WeatherType type;
   final String dateTime;
   final double rainIntensity;
+  final double rainProbability;
   final double temperature;
   static ColorInterpolator colorInterpolator =
       ColorInterpolator(Config.coolColor, Config.hotColor);
 
-  WeatherForecast(
-    this.type,
-    this.dateTime,
-    this.rainIntensity,
-    this.temperature,
-  );
+  WeatherForecast(this.type, this.dateTime, this.rainIntensity,
+      this.temperature, this.rainProbability);
 
   Color get weatherColor {
     if (type == WeatherType.rainy) {
