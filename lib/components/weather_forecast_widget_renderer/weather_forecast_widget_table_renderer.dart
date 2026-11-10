@@ -5,8 +5,8 @@ import 'package:home_dashboard/config/config.dart';
 import 'package:home_dashboard/models/weather_forecast.dart';
 import 'package:home_dashboard/utils/pad.dart';
 
-const baseSize = 20.0;
-const headerSize = 24.0;
+const baseSize = 24.0;
+const headerSize = 28.0;
 
 class WeatherForecastWidgetTableRenderer extends StatelessWidget {
   final List<WeatherForecast> data;
@@ -49,7 +49,7 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
 
               // rainIntensity is already multiplied by 1000 in the driver
               String rainValLabel = forecast.rainIntensity > 0
-                  ? '${forecast.rainIntensity}'
+                  ? '(${forecast.rainIntensity})'
                   : '-';
 
               return TableRow(
@@ -61,12 +61,12 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
                   ),
                   WeatherTableCell(
                     child: WeatherText('$temperatureLabel', baseSize,
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.center,
                         fontWeight: FontWeight.bold),
                   ),
                   WeatherTableCell(
                     child: WeatherText(
-                      '${forecast.rainProbability.round()} ($rainValLabel)',
+                      '${forecast.rainProbability.round()}% $rainValLabel',
                       baseSize,
                       textAlign: TextAlign.right,
                     ),
@@ -149,7 +149,7 @@ class WeatherTableHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableCell(
       child: Container(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(8.0),
         child: WeatherTableHeaderText(text, size),
       ),
     );
@@ -165,7 +165,7 @@ class WeatherTableCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableCell(
       child: Container(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(8.0),
         child: child,
       ),
     );
