@@ -15,12 +15,11 @@ class OpenMeteoDriver {
       return safeFetchMock();
     }
 
-    final uri = Uri.parse(
-      'https://api.open-meteo.com/v1/forecast'
-      '?latitude=$lat&longitude=$lon'
-      '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code'
-      '&timezone=auto',
-    );
+    final uri = Uri.parse('https://api.open-meteo.com/v1/forecast'
+        '?latitude=$lat&longitude=$lon'
+        '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code'
+        '&timezone=auto'
+        '&forecast_hours=24');
 
     try {
       final response = await http.get(
@@ -47,8 +46,7 @@ class OpenMeteoDriver {
           double rainProbability = safeParseDouble(rainProbs[i]) ?? 0.0;
 
           // Multiply precipitation by 1000 as requested
-          double rainIntensity =
-              (safeParseDouble(precipitations[i]) ?? 0.0) * 1000;
+          double rainIntensity = (safeParseDouble(precipitations[i]) ?? 0.0);
 
           int weatherCode = weatherCodes[i] is int
               ? weatherCodes[i]

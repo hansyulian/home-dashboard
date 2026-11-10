@@ -5,21 +5,18 @@ import 'package:home_dashboard/config/config.dart';
 import 'package:home_dashboard/models/weather_forecast.dart';
 import 'package:home_dashboard/utils/pad.dart';
 
-const headerScale = 1.2;
-const baseSize = 12.0;
+const baseSize = 20.0;
+const headerSize = 24.0;
 
 class WeatherForecastWidgetTableRenderer extends StatelessWidget {
   final List<WeatherForecast> data;
 
   const WeatherForecastWidgetTableRenderer(this.data, {super.key});
 
-  double get scaledSize => baseSize; // Adjust if settings provide size scaling
-  double get headerSize => scaledSize * headerScale;
-
   TableRow renderTableHeader() {
     return TableRow(children: [
       WeatherTableHeader(text: 'Time', size: headerSize),
-      WeatherTableHeader(text: 'Temp', size: headerSize),
+      WeatherTableHeader(text: '°C', size: headerSize),
       WeatherTableHeader(text: 'Rain', size: headerSize),
     ]);
   }
@@ -36,10 +33,9 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
         color: Colors.black87,
         child: Table(
           columnWidths: const {
-            0: FlexColumnWidth(1),
-            1: FlexColumnWidth(1),
-            2: FlexColumnWidth(1.2),
-            3: FlexColumnWidth(1.5),
+            0: FlexColumnWidth(3),
+            1: FlexColumnWidth(2),
+            2: FlexColumnWidth(4),
           },
           border: TableBorder.all(color: Colors.grey, width: 0.5),
           children: [
@@ -53,25 +49,25 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
 
               // rainIntensity is already multiplied by 1000 in the driver
               String rainValLabel = forecast.rainIntensity > 0
-                  ? '${forecast.rainIntensity.round()}'
+                  ? '${forecast.rainIntensity}'
                   : '-';
 
               return TableRow(
                 decoration: BoxDecoration(color: forecast.weatherColor),
                 children: [
                   WeatherTableCell(
-                    child: WeatherText(timeLabel, scaledSize,
+                    child: WeatherText(timeLabel, baseSize,
                         textAlign: TextAlign.center),
                   ),
                   WeatherTableCell(
-                    child: WeatherText('$temperatureLabel°C', scaledSize,
+                    child: WeatherText('$temperatureLabel', baseSize,
                         textAlign: TextAlign.right,
                         fontWeight: FontWeight.bold),
                   ),
                   WeatherTableCell(
                     child: WeatherText(
-                      '${forecast.rainProbability.round()}% ($rainValLabel)',
-                      scaledSize,
+                      '${forecast.rainProbability.round()} ($rainValLabel)',
+                      baseSize,
                       textAlign: TextAlign.right,
                     ),
                   ),
@@ -88,9 +84,9 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
     switch (type) {
       case WeatherType.rainy:
         return Image.asset('assets/icons/rain.png',
-            height: scaledSize, width: scaledSize);
+            height: baseSize, width: baseSize);
       default:
-        return SizedBox(width: scaledSize, height: scaledSize);
+        return SizedBox(width: baseSize, height: baseSize);
     }
   }
 }
@@ -153,7 +149,7 @@ class WeatherTableHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableCell(
       child: Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: WeatherTableHeaderText(text, size),
       ),
     );
@@ -169,7 +165,7 @@ class WeatherTableCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableCell(
       child: Container(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(4.0),
         child: child,
       ),
     );
