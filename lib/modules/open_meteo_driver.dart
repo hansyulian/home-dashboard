@@ -17,7 +17,7 @@ class OpenMeteoDriver {
 
     final uri = Uri.parse('https://api.open-meteo.com/v1/forecast'
         '?latitude=$lat&longitude=$lon'
-        '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code'
+        '&hourly=temperature_2m,precipitation_probability,precipitation'
         '&timezone=auto'
         '&forecast_hours=24');
 
@@ -37,7 +37,6 @@ class OpenMeteoDriver {
         List<dynamic> temperatures = hourly['temperature_2m'];
         List<dynamic> rainProbs = hourly['precipitation_probability'];
         List<dynamic> precipitations = hourly['precipitation'];
-        List<dynamic> weatherCodes = hourly['weather_code'];
 
         List<WeatherForecast> result = [];
         for (var i = 0; i < times.length; i++) {
@@ -48,14 +47,8 @@ class OpenMeteoDriver {
           // Multiply precipitation by 1000 as requested
           double rainIntensity = (safeParseDouble(precipitations[i]) ?? 0.0);
 
-          int weatherCode = weatherCodes[i] is int
-              ? weatherCodes[i]
-              : int.tryParse('${weatherCodes[i]}') ?? 0;
-
           // WMO Weather Codes for rain, showers, and thunderstorms
-          bool isRainy = [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99]
-                  .contains(weatherCode) ||
-              rainIntensity > 0;
+          bool isRainy = rainProbability > 50;
 
           WeatherType type = isRainy ? WeatherType.rainy : WeatherType.clear;
 
