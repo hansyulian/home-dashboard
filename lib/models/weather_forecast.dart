@@ -15,21 +15,35 @@ class WeatherForecast {
   final double rainIntensity;
   final double rainProbability;
   final double temperature;
-  static ColorInterpolator colorInterpolator =
+  static ColorInterpolator temperatureColorInterpolator =
       ColorInterpolator(Config.coolColor, Config.hotColor);
+  static ColorInterpolator rainColorInterpolator =
+      ColorInterpolator(Config.lightRainColor, Config.heavyRainColor);
 
   WeatherForecast(this.type, this.dateTime, this.rainIntensity,
       this.temperature, this.rainProbability);
 
   Color get weatherColor {
-    if (type == WeatherType.rainy) {
-      return Config.rainColor;
+    if (rainProbability == 0 && rainIntensity == 0) {
+      return temperatureColor;
     }
+    if (type == WeatherType.rainy) {
+      return Config.heavyRainColor;
+    }
+    double ratio = valueRatio(
+      rainProbability,
+      0,
+      100,
+    );
+    return temperatureColorInterpolator.interpolate(ratio);
+  }
+
+  Color get temperatureColor {
     double ratio = valueRatio(
       temperature,
       Config.coolTemperature,
       Config.hotTemperature,
     );
-    return colorInterpolator.interpolate(ratio);
+    return temperatureColorInterpolator.interpolate(ratio);
   }
 }

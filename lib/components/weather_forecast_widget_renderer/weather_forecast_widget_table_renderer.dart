@@ -53,7 +53,7 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
                   : '-';
 
               return TableRow(
-                decoration: BoxDecoration(color: forecast.weatherColor),
+                decoration: BoxDecoration(color: forecast.temperatureColor),
                 children: [
                   WeatherTableCell(
                     child: WeatherText(timeLabel, baseSize,
@@ -70,6 +70,7 @@ class WeatherForecastWidgetTableRenderer extends StatelessWidget {
                       baseSize,
                       textAlign: TextAlign.right,
                     ),
+                    color: forecast.weatherColor,
                   ),
                 ],
               );
@@ -158,8 +159,9 @@ class WeatherTableHeader extends StatelessWidget {
 
 class WeatherTableCell extends StatelessWidget {
   final Widget child;
+  final Color? color;
 
-  const WeatherTableCell({required this.child, super.key});
+  const WeatherTableCell({required this.child, this.color, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +169,7 @@ class WeatherTableCell extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8.0),
         child: child,
+        color: color,
       ),
     );
   }
