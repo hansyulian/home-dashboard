@@ -296,7 +296,9 @@ class HomeServerSensorSocketWidgetState
               spacing: 8,
               children: [
                 Container(
-                    width: 8, height: 8, color: stringToColor(record.target)),
+                    width: 8,
+                    height: 8,
+                    color: stringToLightColor(record.target)),
                 _renderText(record.target), // Null check for target
               ],
             ),
@@ -386,10 +388,10 @@ class HomeServerSensorSocketWidgetState
           children: rowItems.map((rowItem) {
             // Removed Expanded here. Containers will now size based on their padding/content.
             return Container(
-              color: stringToColor(rowItem.target),
+              color: stringToLightColor(rowItem.target),
               padding: const EdgeInsets.all(4),
               margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-              child: _renderText(rowItem.displayText),
+              child: _renderText(rowItem.displayText, color: Colors.black),
             );
           }).toList(),
         ),
